@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.ToString;
 
@@ -18,6 +19,7 @@ import lombok.ToString;
 @ToString
 @Entity
 @Table(name = "produtos")
+@AllArgsConstructor
 public class Produto {
 
 	@Id
