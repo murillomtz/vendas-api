@@ -15,22 +15,22 @@ import org.springframework.stereotype.Service;
 import com.mtz.vendasapi.domain.exception.NegocioException;
 import com.mtz.vendasapi.domain.model.Cliente;
 import com.mtz.vendasapi.domain.repository.ClienteRepository;
+import com.mtz.vendasapi.domain.service.IClienteService;
 import com.mtz.vendasapi.infrastructure.ClienteSpecs;
 
 @Service
-public class ClienteService implements IClienteService {
+public class ClienteServiceImp implements IClienteService {
 
 	@Autowired
 	private ClienteRepository clienteRepository;
 
-//	@Autowired
-//	private PedidoRepository pedidoRepository;
-
+	@Override
 	public Page<Cliente> listar(String filtro, String ordenacao, int pagina) {
 		return clienteRepository.findAll(ClienteSpecs.filtrarPor(filtro),
 				PageRequest.of(pagina, 10, Sort.by(ordenacao)));
 	}
 
+	@Override
 	public Cliente buscarPorId(Long id) throws NegocioException {
 		Optional<Cliente> clienteOptional = clienteRepository.findById(id);
 		if (clienteOptional.isPresent()) {
@@ -40,10 +40,12 @@ public class ClienteService implements IClienteService {
 		}
 	}
 
+	@Override
 	public Cliente criar(Cliente cliente) {
 		return clienteRepository.save(cliente);
 	}
 
+	@Override
 	public Cliente atualizar(Cliente cliente) throws NegocioException {
 		Cliente clienteExistente = buscarPorId(cliente.getId());
 		if (clienteExistente != null) {
@@ -53,6 +55,7 @@ public class ClienteService implements IClienteService {
 		}
 	}
 
+	@Override
 	public ResponseEntity<String> deletar(Long id) {
 		try {
 			clienteRepository.deleteById(id);
@@ -65,4 +68,5 @@ public class ClienteService implements IClienteService {
 					.body("Esse Cliente possui pedidos, não é possivel excluir.");
 		}
 	}
+
 }

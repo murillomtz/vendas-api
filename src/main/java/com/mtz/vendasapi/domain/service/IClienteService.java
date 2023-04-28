@@ -1,4 +1,4 @@
-package com.mtz.vendasapi.domain.service.serviceImp;
+package com.mtz.vendasapi.domain.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;

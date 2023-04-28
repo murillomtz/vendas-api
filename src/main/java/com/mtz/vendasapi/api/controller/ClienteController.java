@@ -21,14 +21,14 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.mtz.vendasapi.domain.model.Cliente;
 import com.mtz.vendasapi.domain.model.dto.ClienteDTO;
-import com.mtz.vendasapi.domain.service.serviceImp.ClienteService;
+import com.mtz.vendasapi.domain.service.IClienteService;
 
 @RestController
 @RequestMapping("/clientes")
 public class ClienteController {
 
 	@Autowired
-	private ClienteService clienteService;
+	private IClienteService clienteService;
 
 	@GetMapping
 	public ResponseEntity<Page<ClienteDTO>> listar(@RequestParam(value = "filtro", required = false) String filtro,
