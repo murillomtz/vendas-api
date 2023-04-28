@@ -1,5 +1,5 @@
 ### Guia para ultilização
-
+[Baixar Collection para Postman](./VENDAS-API.postman_collection)
 
 Listagem de todos os Pedidos:
 
