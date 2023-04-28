@@ -14,7 +14,7 @@ public interface IPedidoService {
 
 	public Pedido buscarPorId(Long id) throws NegocioException;
 
-	public void atualizar(Pedido pedido) throws NegocioException;
+	public void atualizar(Pedido pedido, Boolean isAtualiaza) throws NegocioException;
 
 	public ResponseEntity<String> excluir(Long id);
 

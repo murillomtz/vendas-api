@@ -83,19 +83,22 @@ public class PedidoServiceImp implements IPedidoService {
 	}
 
 	@Override
-	public void atualizar(Pedido pedido) throws NegocioException {
+	public void atualizar(Pedido pedido, Boolean isAtualiaza) throws NegocioException {
 		try {
 			Pedido pedidoExistente = buscarPorId(pedido.getId());
 
 			for (Produto produto : pedido.getProdutos()) {
 				if (produto.getId() != null) {
-					pedidoExistente.getProdutos().clear();
+					if (isAtualiaza == Boolean.TRUE) {
+						pedidoExistente.getProdutos().clear();
+					}
+
 					pedidoExistente.getProdutos().add(produtoRepository.findById(produto.getId())
 							.orElseThrow(() -> new NegocioException("Produto não encontrado.")));
 				}
 			}
 			pedidoExistente.setCliente(pedido.getCliente());
-
+			pedidoExistente.setAtendente(pedido.getAtendente());
 			pedidoExistente.setDataPedido(pedido.getDataPedido());
 			pedidoExistente.setValorTotal(pedido.getValorTotal());
 

@@ -1,5 +1,6 @@
 package com.mtz.vendasapi.api.controller;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -26,6 +27,7 @@ import com.mtz.vendasapi.domain.model.dto.ProdutoDTO;
 import com.mtz.vendasapi.domain.service.IClienteService;
 import com.mtz.vendasapi.domain.service.IPedidoService;
 import com.mtz.vendasapi.domain.service.IProdutoService;
+import com.mtz.vendasapi.domain.service.IUsuarioService;
 
 @RestController
 @RequestMapping("/pedidos")
@@ -39,6 +41,9 @@ public class PedidoController {
 
 	@Autowired
 	private IClienteService clienteService;
+
+	@Autowired
+	private IUsuarioService usuarioService;
 
 	@GetMapping
 	public ResponseEntity<Page<PedidoDTO>> listar(@RequestParam(value = "filtro", required = false) String filtro,
@@ -76,13 +81,13 @@ public class PedidoController {
 			if (pedidoExistente != null) {
 				Pedido pedido = pedidoDTO.toEntity();
 				pedido.setId(id);
-
+				pedido.setAtendente(usuarioService.buscarPorId(pedidoDTO.getIdAtendente()));
 				pedido.setCliente(clienteService.buscarPorId(pedidoDTO.getIdCliente()));
 				pedido.setDataPedido(pedidoDTO.getDataPedido());
 				pedido.setValorTotal(pedidoDTO.getValorTotal());
 
-				pedidoService.atualizar(pedido);
-				return ResponseEntity.ok(new PedidoDTO(pedidoExistente));
+				pedidoService.atualizar(pedido, Boolean.TRUE);
+				return ResponseEntity.ok(new PedidoDTO(pedido));
 			}
 			return ResponseEntity.notFound().build();
 		} catch (NegocioException e) {
@@ -100,9 +105,16 @@ public class PedidoController {
 		try {
 			Pedido pedido = pedidoService.buscarPorId(id);
 			if (pedido != null) {
-				Set<Produto> listaProdutos = produtos.stream().map(ProdutoDTO::toEntity).collect(Collectors.toSet());
+				// Set<Produto> listaProdutos =
+				// produtos.stream().map(ProdutoDTO::toEntity).collect(Collectors.toSet());
+				Set<Produto> listaProdutos = new HashSet<>();
+
+				produtos.forEach(produto -> {
+					listaProdutos.add(produtoService.buscarPorId(produto.getId()));
+				});
+
 				pedido.setProdutos(listaProdutos);
-				pedidoService.atualizar(pedido);
+				pedidoService.atualizar(pedido, Boolean.FALSE);
 				return ResponseEntity.ok(new PedidoDTO(pedido));
 			}
 			return ResponseEntity.notFound().build();
