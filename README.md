@@ -30,7 +30,7 @@ Para referência adicional, considere as seguintes seções:
 - Foi utilizado o Framework Spring Boot e Hibernate.
 - Armazenamento - Utilizando MySql.
 
-## Informaçâo Importantes:
+## Informações Importantes:
 ### **Banco de Dados MySQL
 
 >
