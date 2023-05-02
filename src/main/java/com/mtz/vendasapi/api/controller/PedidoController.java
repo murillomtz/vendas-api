@@ -82,7 +82,7 @@ public class PedidoController {
 				Pedido pedido = pedidoDTO.toEntity();
 				pedido.setId(id);
 				pedido.setAtendente(usuarioService.buscarPorId(pedidoDTO.getIdAtendente()));
-				pedido.setCliente(clienteService.buscarPorId(pedidoDTO.getIdCliente()));
+				pedido.setCliente(clienteService.buscarPorId(pedidoDTO.getIdCliente()).toEntity());
 				pedido.setDataPedido(pedidoDTO.getDataPedido());
 				pedido.setValorTotal(pedidoDTO.getValorTotal());
 
