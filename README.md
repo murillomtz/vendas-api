@@ -61,9 +61,3 @@ Para referência adicional, considere as seguintes seções:
 [Ver exemplos de algumas funcionalidades](./doc/pedidoUrls.md)
 
 
-## Melhorias futuras:
-
-- MELHORAR PADRONIZAÇÃO DE EXCEÇÕES
-- APLICAR MELHORIAS PARA ATINGIR 3 NIVEL DO MODELO DE MATURIDADE RICHARDSON 
-- CRIAÇÃO DO FRONT-END.
-

@@ -1,6 +1,7 @@
 package com.mtz.vendasapi.domain.service.serviceImp;
 
 import com.mtz.vendasapi.api.controller.ClienteController;
+import com.mtz.vendasapi.domain.constant.MensagensConstant;
 import com.mtz.vendasapi.domain.exception.NegocioException;
 import com.mtz.vendasapi.domain.model.Cliente;
 import com.mtz.vendasapi.domain.model.dto.ClienteDTO;
@@ -30,15 +31,13 @@ public class ClienteServiceImp implements IClienteService {
     public Page<ClienteDTO> listar(String filtro, String ordenacao, int pagina) {
 
         try {
-            Page<ClienteDTO> clientesDTO = this.clienteRepository.findAll(ClienteSpecs.filtrarPor(filtro),
-                    PageRequest.of(pagina, 10, Sort.by(ordenacao))).map(cliente -> new ClienteDTO(cliente));
+            Page<ClienteDTO> clientesDTO = this.clienteRepository.findAll(ClienteSpecs.filtrarPor(filtro), PageRequest.of(pagina, 10, Sort.by(ordenacao))).map(cliente -> new ClienteDTO(cliente));
 
-            clientesDTO.forEach(cliente -> cliente.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ClienteController.class)
-                    .buscar(cliente.getId())).withRel("Buscar Pelo ID: ")));
+            clientesDTO.forEach(cliente -> cliente.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ClienteController.class).buscar(cliente.getId())).withRel("Buscar Pelo ID: ")));
 
             return clientesDTO;
         } catch (Exception e) {
-            throw new NegocioException("Erro interno. ");
+            throw new NegocioException(MensagensConstant.ERRO_GENERICO.getValor(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -49,11 +48,11 @@ public class ClienteServiceImp implements IClienteService {
             if (clienteOptional.isPresent()) {
                 return new ClienteDTO(clienteOptional.get());
             }
-            throw new NegocioException("Cliente não foi localizado. ");
+            throw new NegocioException(MensagensConstant.ERRO_CLIENTE_NAO_ENCONTRADO.getValor(), HttpStatus.NOT_FOUND);
         } catch (NegocioException m) {
             throw m;
         } catch (Exception e) {
-            throw new NegocioException("Erro interno. ");
+            throw new NegocioException(MensagensConstant.ERRO_GENERICO.getValor(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -61,13 +60,13 @@ public class ClienteServiceImp implements IClienteService {
     public ClienteDTO criar(Cliente cliente) {
         try {
             if (cliente.getId() != null) {
-                throw new NegocioException("ID não pode ser informado na operação de cadastro.");
+                throw new NegocioException(MensagensConstant.ERRO_ID_INFORMADO.getValor(), HttpStatus.BAD_REQUEST);
             }
             return this.cadastrarOuAtualizar(cliente);
         } catch (NegocioException m) {
             throw m;
         } catch (Exception e) {
-            throw new NegocioException("Erro interno identificado. Contate o suporte.");
+            throw new NegocioException(MensagensConstant.ERRO_GENERICO.getValor(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -79,7 +78,7 @@ public class ClienteServiceImp implements IClienteService {
         } catch (NegocioException m) {
             throw m;
         } catch (Exception e) {
-            throw new NegocioException("Erro interno identificado. Contate o suporte.");
+            throw new NegocioException(MensagensConstant.ERRO_GENERICO.getValor(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -87,12 +86,11 @@ public class ClienteServiceImp implements IClienteService {
     public ResponseEntity<String> deletar(Long id) {
         try {
             this.clienteRepository.deleteById(id);
-            return ResponseEntity.status(HttpStatus.OK).body("Cliente excluido com sucesso.");
+            return ResponseEntity.status(HttpStatus.OK).body(MensagensConstant.OK_EXCLUIDO_COM_SUCESSO.getValor());
         } catch (EmptyResultDataAccessException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente não encontrado");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(MensagensConstant.ERRO_CLIENTE_NAO_ENCONTRADO.getValor());
         } catch (DataIntegrityViolationException i) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body("Esse Cliente possui pedidos, não é possivel excluir.");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(MensagensConstant.ERRO_EXCLUIR_CLIENTE.getValor());
         }
     }
 

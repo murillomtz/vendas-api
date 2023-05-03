@@ -1,5 +1,6 @@
 package com.mtz.vendasapi.domain.service.serviceImp;
 
+import com.mtz.vendasapi.domain.constant.MensagensConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -29,7 +30,7 @@ public class ProdutoServiceImp implements IProdutoService {
 			Pageable pageable = PageRequest.of(pagina, 10, Sort.by(ordenacao));
 			return produtoRepository.findAll(ProdutoSpecs.filtrarPor(filtro), pageable);
 		} catch (Exception e) {
-			throw new NegocioException("Erro ao listar produtos.", e);
+			throw new NegocioException(MensagensConstant.ERRO_GENERICO.getValor(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -38,16 +39,17 @@ public class ProdutoServiceImp implements IProdutoService {
 		try {
 			return produtoRepository.save(produto);
 		} catch (Exception e) {
-			throw new NegocioException("Erro ao criar produto.", e);
+			throw new NegocioException(MensagensConstant.ERRO_GENERICO.getValor(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
 	@Override
 	public Produto buscarPorId(Long id) throws NegocioException {
 		try {
-			return produtoRepository.findById(id).orElseThrow(() -> new NegocioException("Produto não encontrado."));
+			return produtoRepository.findById(id).orElseThrow(()
+					-> new NegocioException(MensagensConstant.ERRO_PRODUTO_NAO_ENCONTRADO.getValor(), HttpStatus.NOT_FOUND));
 		} catch (Exception e) {
-			throw new NegocioException("Erro ao buscar produto por id.", e);
+			throw new NegocioException(MensagensConstant.ERRO_GENERICO.getValor(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -65,7 +67,7 @@ public class ProdutoServiceImp implements IProdutoService {
 		} catch (NegocioException e) {
 			throw e;
 		} catch (Exception e) {
-			throw new NegocioException("Erro ao atualizar produto.", e);
+			throw new NegocioException(MensagensConstant.ERRO_GENERICO.getValor(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
