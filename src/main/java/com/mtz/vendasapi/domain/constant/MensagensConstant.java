@@ -15,12 +15,15 @@ public enum MensagensConstant {
 
 	ERRO_PEDIDO_CADASTRADO_ANTERIORMENTE("Pedido já possui cadastro."),
 	ERRO_PEDIDO_NAO_ENCONTRADO("Pedido não encontrado."),
+	//ERRO_EXCLUIR_PEDIDO("Esse Pedido não pode ser excluido."),
 
 	ERRO_PRODUTO_CADASTRADO_ANTERIORMENTE("Produto já possui cadastro."),
 	ERRO_PRODUTO_NAO_ENCONTRADO("Produto não encontrado."),
+	ERRO_EXCLUIR_PRODUTO("Esse Produto está em algum pedido, não é possivel excluir."),
 
 	ERRO_USUARIO_CADASTRADO_ANTERIORMENTE("Usuário já possui cadastro."),
 	ERRO_USUARIO_NAO_ENCONTRADO("Usuário não encontrado."),
+	ERRO_EXCLUIR_USUARIO("Esse Usuário possui pedidos, não é possivel excluir."),
 
 	OK_EXCLUIDO_COM_SUCESSO("Excluido com sucesso."),
 

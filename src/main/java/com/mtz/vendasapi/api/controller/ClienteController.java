@@ -28,7 +28,7 @@ public class ClienteController {
                                                              @RequestParam(value = "pagina", defaultValue = "0") int pagina) {
 
         Response<Page<ClienteDTO>> response = new Response<>();
-        Page<ClienteDTO> clientes = clienteService.listar(filtro, ordenacao, pagina);
+        Page<ClienteDTO> clientes = this.clienteService.listar(filtro, ordenacao, pagina);
         //response.setData(clientes);
         response.setContent(clientes.getContent());
         response.setStatusCode(HttpStatus.OK.value());

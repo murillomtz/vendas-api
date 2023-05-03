@@ -31,9 +31,12 @@ public class ClienteServiceImp implements IClienteService {
     public Page<ClienteDTO> listar(String filtro, String ordenacao, int pagina) {
 
         try {
-            Page<ClienteDTO> clientesDTO = this.clienteRepository.findAll(ClienteSpecs.filtrarPor(filtro), PageRequest.of(pagina, 10, Sort.by(ordenacao))).map(cliente -> new ClienteDTO(cliente));
+            Page<ClienteDTO> clientesDTO = this.clienteRepository.findAll(ClienteSpecs.
+                    filtrarPor(filtro), PageRequest.of(pagina, 10, Sort.by(ordenacao))).
+                    map(cliente -> new ClienteDTO(cliente));
 
-            clientesDTO.forEach(cliente -> cliente.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ClienteController.class).buscar(cliente.getId())).withRel("Buscar Pelo ID: ")));
+            clientesDTO.forEach(cliente -> cliente.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ClienteController.class).
+                    buscar(cliente.getId())).withRel("Buscar Pelo ID: ")));
 
             return clientesDTO;
         } catch (Exception e) {
