@@ -110,7 +110,7 @@ public class PedidoController {
                 Set<Produto> listaProdutos = new HashSet<>();
 
                 produtos.forEach(produto -> {
-                    listaProdutos.add(produtoService.buscarPorId(produto.getId()));
+                    listaProdutos.add(produtoService.buscarPorId(produto.getId()).toEntity());
                 });
 
                 pedido.setProdutos(listaProdutos);
