@@ -125,7 +125,7 @@ public class ProdutoController {
     public ResponseEntity<Response<String>> deletar(@PathVariable Long id) {
 
         Response<String> response = new Response<>();
-        response.setData(String.valueOf(this.produtoService.excluir(id).getBody()));
+        response.setData(String.valueOf(this.produtoService.excluir(id)));
         response.setStatusCode(HttpStatus.OK.value());
 
         response.add(Link.of("http://localhost:8080/produtos")

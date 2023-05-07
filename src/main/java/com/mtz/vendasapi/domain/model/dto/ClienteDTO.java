@@ -1,18 +1,16 @@
 package com.mtz.vendasapi.domain.model.dto;
 
-import java.util.Date;
+import com.mtz.vendasapi.domain.model.Cliente;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Size;
-
-import com.mtz.vendasapi.domain.model.Cliente;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.hateoas.RepresentationModel;
+import java.util.Date;
 
 @AllArgsConstructor
 @Getter
@@ -51,6 +49,10 @@ public class ClienteDTO extends RepresentationModel<ClienteDTO> {
     @NotBlank(message = "O telefone é obrigatório")
     private String telefone;
 
+    @NotBlank(message = "O email do usuário não pode estar em branco")
+    @Size(max = 100, message = "O email do usuário não pode ter mais de 100 caracteres")
+    private String email;
+
     public ClienteDTO(Cliente cliente) {
         this.id = cliente.getId();
         this.nome = cliente.getNome();
@@ -62,6 +64,7 @@ public class ClienteDTO extends RepresentationModel<ClienteDTO> {
         this.cidade = cliente.getCidade();
         this.estado = cliente.getEstado();
         this.telefone = cliente.getTelefone();
+        this.email = cliente.getEmail();
     }
 
     public Cliente toEntity() {
@@ -76,6 +79,7 @@ public class ClienteDTO extends RepresentationModel<ClienteDTO> {
         cliente.setCidade(cidade);
         cliente.setEstado(estado);
         cliente.setTelefone(telefone);
+        cliente.setEmail(email);
         return cliente;
     }
 

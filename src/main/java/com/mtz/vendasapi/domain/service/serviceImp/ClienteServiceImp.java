@@ -16,7 +16,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -86,14 +85,14 @@ public class ClienteServiceImp implements IClienteService {
     }
 
     @Override
-    public ResponseEntity<String> deletar(Long id) {
+    public String deletar(Long id) {
         try {
             this.clienteRepository.deleteById(id);
-            return ResponseEntity.status(HttpStatus.OK).body(MensagensConstant.OK_EXCLUIDO_COM_SUCESSO.getValor());
+            return MensagensConstant.OK_EXCLUIDO_COM_SUCESSO.getValor();
         } catch (EmptyResultDataAccessException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(MensagensConstant.ERRO_CLIENTE_NAO_ENCONTRADO.getValor());
+            return MensagensConstant.ERRO_CLIENTE_NAO_ENCONTRADO.getValor();
         } catch (DataIntegrityViolationException i) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(MensagensConstant.ERRO_EXCLUIR_CLIENTE.getValor());
+            return MensagensConstant.ERRO_EXCLUIR_CLIENTE.getValor();
         }
     }
 

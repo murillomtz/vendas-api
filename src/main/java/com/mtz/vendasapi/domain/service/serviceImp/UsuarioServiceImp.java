@@ -4,13 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import com.mtz.vendasapi.api.controller.ClienteController;
 import com.mtz.vendasapi.api.controller.UsuarioController;
 import com.mtz.vendasapi.domain.constant.MensagensConstant;
-import com.mtz.vendasapi.domain.model.Cliente;
-import com.mtz.vendasapi.domain.model.dto.ClienteDTO;
 import com.mtz.vendasapi.domain.model.dto.UsuarioDTO;
-import com.mtz.vendasapi.infrastructure.ClienteSpecs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -19,7 +15,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.mtz.vendasapi.domain.exception.NegocioException;
@@ -95,14 +90,15 @@ public class UsuarioServiceImp implements IUsuarioService {
     }
 
     @Override
-    public ResponseEntity<String> deletar(Long id) {
+    public String deletar(Long id) {
+
         try {
             this.usuarioRepository.deleteById(id);
-            return ResponseEntity.status(HttpStatus.OK).body(MensagensConstant.OK_EXCLUIDO_COM_SUCESSO.getValor());
+            return MensagensConstant.OK_EXCLUIDO_COM_SUCESSO.getValor();
         } catch (EmptyResultDataAccessException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(MensagensConstant.ERRO_USUARIO_NAO_ENCONTRADO.getValor());
+            return MensagensConstant.ERRO_USUARIO_NAO_ENCONTRADO.getValor();
         } catch (DataIntegrityViolationException i) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(MensagensConstant.ERRO_EXCLUIR_USUARIO.getValor());
+            return MensagensConstant.ERRO_EXCLUIR_USUARIO.getValor();
         }
     }
 

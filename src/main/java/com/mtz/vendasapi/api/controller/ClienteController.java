@@ -64,7 +64,7 @@ public class ClienteController {
                     .atualizar(cliente.getId(), clienteDTO)).withRel("Atualizar Cliente: "));
 
             response.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ClienteController.class)
-                    .criar(clienteDTO)).withRel("Criar novo CLiente: "));
+                    .criar(clienteDTO)).withRel("Criar novo Cliente: "));
 
             response.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ClienteController.class)
                     .deletar(cliente.getId())).withRel("Remover Clientes: "));
@@ -104,7 +104,7 @@ public class ClienteController {
         cliente.setId(id);
         response.setData(this.clienteService.atualizar(cliente));
         response.setStatusCode(HttpStatus.OK.value());
-        ClienteDTO clienteDTOChenger = new ClienteDTO(cliente);
+        //ClienteDTO clienteDTOChenger = new ClienteDTO(cliente);
 
         response.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ClienteController.class)
                 .buscar(clienteDTO.getId())).withRel("Buscar Pelo ID: "));
@@ -126,7 +126,7 @@ public class ClienteController {
     public ResponseEntity<Response<String>> deletar(@PathVariable Long id) {
 
         Response<String> response = new Response<>();
-        response.setData(String.valueOf(this.clienteService.deletar(id).getBody()));
+        response.setData(String.valueOf(this.clienteService.deletar(id)));
         response.setStatusCode(HttpStatus.OK.value());
 
         response.add(Link.of("http://localhost:8080/clientes")

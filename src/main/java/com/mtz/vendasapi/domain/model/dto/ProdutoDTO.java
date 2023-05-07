@@ -9,6 +9,7 @@ import org.springframework.hateoas.RepresentationModel;
 import javax.persistence.Column;
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @AllArgsConstructor
 @Getter
@@ -51,6 +52,21 @@ public class ProdutoDTO extends RepresentationModel<ProdutoDTO> {
 		produto.setValorVenda(this.valorVenda);
 		produto.setQuantidade(this.quantidade);
 		return produto;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		ProdutoDTO produto = (ProdutoDTO) o;
+		return Objects.equals(id, produto.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
 	}
 
 }

@@ -90,15 +90,16 @@ public class ProdutoServiceImp implements IProdutoService {
     }
 
     @Override
-    public ResponseEntity<String> excluir(Long id) {
+    public String excluir(Long id) {
         try {
-            produtoRepository.deleteById(id);
-            return ResponseEntity.status(HttpStatus.OK).body(MensagensConstant.OK_EXCLUIDO_COM_SUCESSO.getValor());
+            this.produtoRepository.deleteById(id);
+            return MensagensConstant.OK_EXCLUIDO_COM_SUCESSO.getValor();
         } catch (EmptyResultDataAccessException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(MensagensConstant.ERRO_PRODUTO_NAO_ENCONTRADO.getValor());
+            return MensagensConstant.ERRO_PRODUTO_NAO_ENCONTRADO.getValor();
         } catch (DataIntegrityViolationException i) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(MensagensConstant.ERRO_EXCLUIR_PRODUTO.getValor());
+            return MensagensConstant.ERRO_EXCLUIR_PRODUTO.getValor();
         }
+
     }
 
     private ProdutoDTO cadastrarOuAtualizar(Produto produto) {

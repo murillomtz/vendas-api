@@ -5,7 +5,6 @@ import org.springframework.data.domain.Page;
 
 import com.mtz.vendasapi.domain.exception.NegocioException;
 import com.mtz.vendasapi.domain.model.Cliente;
-import org.springframework.http.ResponseEntity;
 
 public interface IClienteService {
 
@@ -17,5 +16,5 @@ public interface IClienteService {
 
 	public ClienteDTO atualizar(Cliente cliente) throws NegocioException;
 
-	public ResponseEntity<String> deletar(Long id);
+	public String deletar(Long id);
 }

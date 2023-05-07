@@ -15,7 +15,7 @@ public enum MensagensConstant {
 
 	ERRO_PEDIDO_CADASTRADO_ANTERIORMENTE("Pedido já possui cadastro."),
 	ERRO_PEDIDO_NAO_ENCONTRADO("Pedido não encontrado."),
-	//ERRO_EXCLUIR_PEDIDO("Esse Pedido não pode ser excluido."),
+	ERRO_EXCLUIR_PEDIDO("Esse Pedido não pode ser excluido."),
 
 	ERRO_PRODUTO_CADASTRADO_ANTERIORMENTE("Produto já possui cadastro."),
 	ERRO_PRODUTO_NAO_ENCONTRADO("Produto não encontrado."),
