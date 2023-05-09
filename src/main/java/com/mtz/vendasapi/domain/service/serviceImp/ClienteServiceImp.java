@@ -1,10 +1,13 @@
 package com.mtz.vendasapi.domain.service.serviceImp;
 
 import com.mtz.vendasapi.api.controller.ClienteController;
+import com.mtz.vendasapi.api.controller.UsuarioController;
 import com.mtz.vendasapi.domain.constant.MensagensConstant;
 import com.mtz.vendasapi.domain.exception.NegocioException;
 import com.mtz.vendasapi.domain.model.Cliente;
+import com.mtz.vendasapi.domain.model.Usuario;
 import com.mtz.vendasapi.domain.model.dto.ClienteDTO;
+import com.mtz.vendasapi.domain.model.dto.UsuarioDTO;
 import com.mtz.vendasapi.domain.repository.ClienteRepository;
 import com.mtz.vendasapi.domain.service.IClienteService;
 import com.mtz.vendasapi.infrastructure.ClienteSpecs;
@@ -18,6 +21,8 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -31,7 +36,7 @@ public class ClienteServiceImp implements IClienteService {
 
         try {
             Page<ClienteDTO> clientesDTO = this.clienteRepository.findAll(ClienteSpecs.
-                    filtrarPor(filtro), PageRequest.of(pagina, 10, Sort.by(ordenacao))).
+                            filtrarPor(filtro), PageRequest.of(pagina, 10, Sort.by(ordenacao))).
                     map(cliente -> new ClienteDTO(cliente));
 
             clientesDTO.forEach(cliente -> cliente.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ClienteController.class).
@@ -93,6 +98,29 @@ public class ClienteServiceImp implements IClienteService {
             return MensagensConstant.ERRO_CLIENTE_NAO_ENCONTRADO.getValor();
         } catch (DataIntegrityViolationException i) {
             return MensagensConstant.ERRO_EXCLUIR_CLIENTE.getValor();
+        }
+    }
+
+    @Override
+    public List<ClienteDTO> findByEmail(String email) {
+
+        try {
+            List<Cliente> clientes = this.clienteRepository.findByEmail(email);
+
+            if (clientes.isEmpty()) {
+                throw new NegocioException(MensagensConstant.ERRO_CLIENTE_NAO_ENCONTRADO.getValor(), HttpStatus.NOT_FOUND);
+            }
+            List<ClienteDTO> clienteDTO = new ArrayList<>();
+            clientes.forEach(cliente -> clienteDTO.add(new ClienteDTO(cliente)));
+
+            clienteDTO.forEach(usuario -> usuario.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UsuarioController.class).
+                    buscar(usuario.getId())).withRel("Buscar Pelo ID: ")));
+
+            return clienteDTO;
+        } catch (NegocioException m) {
+            throw m;
+        } catch (Exception e) {
+            throw new NegocioException(MensagensConstant.ERRO_GENERICO.getValor(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

@@ -56,8 +56,10 @@ public class PedidoController {
         response.setNumberOfElements(pedidos.getNumberOfElements());
 
 
-        response.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PedidoController.class).criar(pedidos.getContent().get(0))).withRel("Criar novo Pedido: "));
-
+        if (pedidos.getTotalElements() != 0) {
+            response.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PedidoController.class)
+                    .criar(pedidos.getContent().get(0))).withRel("Criar novo Pedido: "));
+        }
         return ResponseEntity.ok(response);
     }
 
@@ -180,13 +182,32 @@ public class PedidoController {
         Response<PedidoDTO> response = new Response<>();
         response.setStatusCode(HttpStatus.OK.value());
         PedidoDTO pedido = pedidoService.buscarPorId(id);
+        boolean encontrado = false;
+        for (ProdutoDTO produtoAux : produtos) {
+            encontrado = false;
+            for (ProdutoDTO produtoDTO1 : pedido.getProdutos()) {
+                if (produtoAux.getId().equals(produtoDTO1.getId())) {
+                    encontrado = true;
+                    break;
+                }
+
+
+            }
+            if (!encontrado) {
+                throw new NegocioException(MensagensConstant.ERRO_PRODUTO_NAO_ENCONTRADO.getValor(), HttpStatus.NOT_FOUND);
+            }
+
+        }
+
 
         if (pedido != null) {
             for (ProdutoDTO produtoDTO : produtos) {
-                // busca o produto na lista e o remove
+
                 pedido.getProdutos().removeIf(produto -> produto.getId().equals(produtoDTO.getId()));
                 ProdutoDTO produto = this.produtoService.buscarPorId(produtoDTO.getId());
                 pedido.setValorTotal(pedido.getValorTotal().subtract(produto.getValorVenda().multiply(new BigDecimal(produto.getQuantidade()))));
+
+
             }
             response.setData(this.pedidoService.atualizar(pedido.toEntity(), Boolean.FALSE));
         }

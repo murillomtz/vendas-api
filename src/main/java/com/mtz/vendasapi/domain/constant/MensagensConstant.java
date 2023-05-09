@@ -28,6 +28,8 @@ public enum MensagensConstant {
 	OK_EXCLUIDO_COM_SUCESSO("Excluido com sucesso."),
 
 	ERRO_ID_INFORMADO("ID não pode ser informado na operação de cadastro.");
+
+
 	
 	private final String valor;
 	

@@ -1,10 +1,13 @@
 package com.mtz.vendasapi.domain.service;
 
 import com.mtz.vendasapi.domain.model.dto.ClienteDTO;
+import com.mtz.vendasapi.domain.model.dto.UsuarioDTO;
 import org.springframework.data.domain.Page;
 
 import com.mtz.vendasapi.domain.exception.NegocioException;
 import com.mtz.vendasapi.domain.model.Cliente;
+
+import java.util.List;
 
 public interface IClienteService {
 
@@ -17,4 +20,6 @@ public interface IClienteService {
 	public ClienteDTO atualizar(Cliente cliente) throws NegocioException;
 
 	public String deletar(Long id);
+
+	public List<ClienteDTO> findByEmail(String email);
 }

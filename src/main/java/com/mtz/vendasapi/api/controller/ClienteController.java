@@ -3,6 +3,7 @@ package com.mtz.vendasapi.api.controller;
 import com.mtz.vendasapi.domain.model.Cliente;
 import com.mtz.vendasapi.domain.model.Response;
 import com.mtz.vendasapi.domain.model.dto.ClienteDTO;
+import com.mtz.vendasapi.domain.model.dto.UsuarioDTO;
 import com.mtz.vendasapi.domain.service.IClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/clientes")
@@ -133,6 +135,25 @@ public class ClienteController {
                 .withRel("Buscar todos os Clientes: "));
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("/email/{email}")
+    public ResponseEntity<Response<List<ClienteDTO>>> buscarPorEmail(@PathVariable String email) {
+
+        Response<List<ClienteDTO>> response = new Response<>();
+        List<ClienteDTO> clientes = this.clienteService.findByEmail(email);
+
+        response.setData(clientes);
+
+        response.setStatusCode(HttpStatus.OK.value());
+
+        if (!clientes.isEmpty()) {
+            response.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ClienteController.class)
+                    .criar(clientes.get(0))).withRel("Criar novo CLiente: "));
+        }
+
+
+        return ResponseEntity.ok(response);
     }
 
 

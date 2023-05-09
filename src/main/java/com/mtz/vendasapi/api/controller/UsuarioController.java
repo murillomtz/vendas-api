@@ -161,9 +161,9 @@ public class UsuarioController {
 
         response.setStatusCode(HttpStatus.OK.value());
 
-        if (!usuarios.isEmpty() ) {
-            response.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UsuarioController.class)).
-                    withRel("Criar novo Usuário: "));
+        if (!usuarios.isEmpty()) {
+            response.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UsuarioController.class)
+                    .criar(usuarios.get(0))).withRel("Criar novo Usuário: "));
         }
         return ResponseEntity.ok(response);
     }

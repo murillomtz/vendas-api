@@ -135,4 +135,58 @@ public class ProdutoController {
 
     }
 
+
+    @PutMapping("/{id}/adicionarQuantidade")
+    public ResponseEntity<Response<ProdutoDTO>> adicionarQuantidade(@PathVariable Long id, @RequestParam Integer quantidade) {
+
+        Response<ProdutoDTO> response = new Response<>();
+        Produto produto = this.produtoService.buscarPorId(id).toEntity();
+        //produto.setId(id);
+        produto.setQuantidade(produto.getQuantidade() + quantidade);
+        response.setData(this.produtoService.atualizar(produto));
+        response.setStatusCode(HttpStatus.OK.value());
+        ProdutoDTO produtoDTOChanger = new ProdutoDTO(produto);
+
+        response.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ProdutoController.class)
+                .buscarPorId(produto.getId())).withRel("Buscar Pelo ID: "));
+
+        response.add(Link.of("http://localhost:8080/produtos")
+                .withRel("Buscar todos os Produtos: "));
+
+        response.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ProdutoController.class)
+                .criar(new ProdutoDTO(produto))).withRel("Criar novo Produto: "));
+
+        response.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ProdutoController.class)
+                .deletar(produto.getId())).withRel("Remover Produto: "));
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+
+    @PutMapping("/{id}/removerQuantidade")
+    public ResponseEntity<Response<ProdutoDTO>> removerQuantidade(@PathVariable Long id, @RequestParam Integer quantidade) {
+
+        Response<ProdutoDTO> response = new Response<>();
+        Produto produto = this.produtoService.buscarPorId(id).toEntity();
+        //produto.setId(id);
+        produto.setQuantidade(produto.getQuantidade() - quantidade);
+        response.setData(this.produtoService.atualizar(produto));
+        response.setStatusCode(HttpStatus.OK.value());
+        ProdutoDTO produtoDTOChanger = new ProdutoDTO(produto);
+
+        response.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ProdutoController.class)
+                .buscarPorId(produto.getId())).withRel("Buscar Pelo ID: "));
+
+        response.add(Link.of("http://localhost:8080/produtos")
+                .withRel("Buscar todos os Produtos: "));
+
+        response.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ProdutoController.class)
+                .criar(new ProdutoDTO(produto))).withRel("Criar novo Produto: "));
+
+        response.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ProdutoController.class)
+                .deletar(produto.getId())).withRel("Remover Produto: "));
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
 }
