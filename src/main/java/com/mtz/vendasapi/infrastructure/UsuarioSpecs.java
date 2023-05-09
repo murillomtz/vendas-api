@@ -6,18 +6,24 @@ import org.springframework.data.jpa.domain.Specification;
 
 import com.mtz.vendasapi.domain.model.Usuario;
 
+import java.util.ArrayList;
+
 public class UsuarioSpecs {
 
     public static Specification<Usuario> filtrarPor(String filtro) {
         return (root, query, builder) -> {
-            if (filtro == null) {
-                return null;
+
+            var predicates = new ArrayList<Predicate>();
+
+
+            if (filtro != null && !filtro.isEmpty()) {
+                var filtroMinusculo = filtro.toLowerCase();
+
+                predicates.add(builder.or(builder.like(
+                        builder.lower(root.get("nome")), "%" + filtroMinusculo + "%"),
+                        builder.like(builder.lower(root.get("email")), "%" + filtroMinusculo + "%")));
             }
-            Predicate predicate = builder.or(
-                    builder.like(builder.lower(root.get("nome")), "%" + filtro.toLowerCase() + "%"),
-                    builder.like(builder.lower(root.get("email")), "%" + filtro.toLowerCase() + "%"),
-                    builder.like(builder.lower(root.get("dataCriacao")), "%" + filtro.toLowerCase() + "%"));
-            return predicate;
+            return builder.and(predicates.toArray(new Predicate[0]));
         };
     }
 }

@@ -13,6 +13,6 @@ import com.mtz.vendasapi.domain.model.Usuario;
 public interface UsuarioRepository
 		extends PagingAndSortingRepository<Usuario, Long>, JpaSpecificationExecutor<Usuario> {
 
-	List<Optional<Usuario>> findByEmail(String email);
+	List<Usuario> findByEmail(String email);
 
 }

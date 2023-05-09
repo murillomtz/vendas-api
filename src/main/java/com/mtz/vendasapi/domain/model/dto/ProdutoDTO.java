@@ -1,25 +1,20 @@
 package com.mtz.vendasapi.domain.model.dto;
 
-import java.math.BigDecimal;
-
-import javax.persistence.Column;
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import com.mtz.vendasapi.domain.model.Produto;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.hateoas.RepresentationModel;
+
+import javax.persistence.Column;
+import javax.validation.constraints.*;
+import java.math.BigDecimal;
+import java.util.Objects;
 
 @AllArgsConstructor
 @Getter
 @Setter
-public class ProdutoDTO {
+public class ProdutoDTO extends RepresentationModel<ProdutoDTO> {
 
 //	@NotNull(message = "O ID do produto não pode ser nulo")
 	private Long id;
@@ -57,6 +52,21 @@ public class ProdutoDTO {
 		produto.setValorVenda(this.valorVenda);
 		produto.setQuantidade(this.quantidade);
 		return produto;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		ProdutoDTO produto = (ProdutoDTO) o;
+		return Objects.equals(id, produto.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
 	}
 
 }

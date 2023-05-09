@@ -1,26 +1,25 @@
 package com.mtz.vendasapi.domain.model.dto;
 
+import com.mtz.vendasapi.domain.model.Cliente;
+import com.mtz.vendasapi.domain.model.Pedido;
+import com.mtz.vendasapi.domain.model.Produto;
+import com.mtz.vendasapi.domain.model.Usuario;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.hateoas.RepresentationModel;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
-
-import com.mtz.vendasapi.domain.model.Cliente;
-import com.mtz.vendasapi.domain.model.Pedido;
-import com.mtz.vendasapi.domain.model.Produto;
-import com.mtz.vendasapi.domain.model.Usuario;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-
 @AllArgsConstructor
 @Getter
 @Setter
-public class PedidoDTO {
+public class PedidoDTO extends RepresentationModel<PedidoDTO> {
 
 	private Long id;
 

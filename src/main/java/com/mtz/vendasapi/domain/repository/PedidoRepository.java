@@ -2,6 +2,7 @@ package com.mtz.vendasapi.domain.repository;
 
 import java.util.List;
 
+import com.mtz.vendasapi.domain.model.dto.PedidoDTO;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -13,8 +14,8 @@ import com.mtz.vendasapi.domain.model.Pedido;
 @Repository
 public interface PedidoRepository extends PagingAndSortingRepository<Pedido, Long>, JpaSpecificationExecutor<Pedido> {
 
-	@Query("SELECT p FROM Pedido p JOIN p.produtos prod WHERE prod.id = :idProduto")
-	List<Pedido> findByProdutoId(@Param("idProduto") Long idProduto);
+    @Query("SELECT p FROM Pedido p JOIN p.produtos prod WHERE prod.id = :idProduto")
+    List<PedidoDTO> findByProdutoId(@Param("idProduto") Long idProduto);
 
 //	@Query("DELETE FROM Pedido WHERE id_cliente = :id_cliente")
 //	public void deleteByCliente(@Param("id_cliente") Long id);
