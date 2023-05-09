@@ -59,5 +59,3 @@ Para referência adicional, considere as seguintes seções:
 
 ## Exemplo das funcionalidades da entidade pedidos:
 [Ver exemplos de algumas funcionalidades](./doc/pedidoUrls.md)
-
-
