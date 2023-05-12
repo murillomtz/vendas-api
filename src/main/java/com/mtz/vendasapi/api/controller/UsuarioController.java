@@ -7,9 +7,11 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import com.mtz.vendasapi.api.config.SwaggerConfig;
 import com.mtz.vendasapi.domain.model.Cliente;
 import com.mtz.vendasapi.domain.model.Response;
 import com.mtz.vendasapi.domain.model.dto.ClienteDTO;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.hateoas.Link;
@@ -31,6 +33,7 @@ import com.mtz.vendasapi.domain.model.Usuario;
 import com.mtz.vendasapi.domain.model.dto.UsuarioDTO;
 import com.mtz.vendasapi.domain.service.IUsuarioService;
 
+@Api(tags = SwaggerConfig.USUARIO)
 @RestController
 @RequestMapping("/usuarios")
 public class UsuarioController {

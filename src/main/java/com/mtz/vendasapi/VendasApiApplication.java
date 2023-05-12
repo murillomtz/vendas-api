@@ -276,8 +276,8 @@ public class VendasApiApplication {
         pedido2.setDataPedido(new Date());
 
         List<BigDecimal> valorPedidos2 = new ArrayList<>();
-        produtosPedido2.forEach(produto -> valorPedidos2.add(produto.getValorVenda().add(produto.getValorVenda()
-                .multiply(new BigDecimal(produto.getQuantidade())))));
+        produtosPedido2.forEach(produto -> valorPedidos2.add(produto.getValorVenda()
+                .multiply(new BigDecimal(produto.getQuantidade()))));
         BigDecimal valorPedido2 = valorPedidos2.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
         pedido2.setValorTotal(valorPedido2);
         //pedido2.setValorTotal(new BigDecimal(200.00));
@@ -290,8 +290,8 @@ public class VendasApiApplication {
         pedido3.setDataPedido(new Date());
 
         List<BigDecimal> valorPedidos3 = new ArrayList<>();
-        produtosPedido3.forEach(produto -> valorPedidos3.add(produto.getValorVenda().add(produto.getValorVenda()
-                .multiply(new BigDecimal(produto.getQuantidade())))));
+        produtosPedido3.forEach(produto -> valorPedidos3.add(produto.getValorVenda()
+                .multiply(new BigDecimal(produto.getQuantidade()))));
         BigDecimal valorPedido3 = valorPedidos3.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
         pedido3.setValorTotal(valorPedido3);
         //pedido3.setValorTotal(new BigDecimal(150.00));

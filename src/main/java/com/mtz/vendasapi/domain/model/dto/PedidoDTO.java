@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
@@ -21,73 +22,73 @@ import java.util.Set;
 @Setter
 public class PedidoDTO extends RepresentationModel<PedidoDTO> {
 
-	private Long id;
+    private Long id;
 
-	@NotNull(message = "O Id do cliente é obrigatório.")
-	private Long idCliente;
+    @NotNull(message = "O Id do cliente é obrigatório.")
+    private Long idCliente;
 
-	@NotNull(message = "O Id do atendente é obrigatório.")
-	private Long idAtendente;
+    @NotNull(message = "O Id do atendente é obrigatório.")
+    private Long idAtendente;
 
-	@NotNull(message = "A data do pedido é obrigatória.")
-	private Date dataPedido;
+    @NotNull(message = "A data do pedido é obrigatória.")
+    private Date dataPedido;
 
-	@NotNull(message = "O valor total é obrigatório.")
-	@Positive(message = "O valor total deve ser maior que zero.")
-	private BigDecimal valorTotal;
+    @NotNull(message = "O valor total é obrigatório.")
+    @Positive(message = "O valor total deve ser maior que zero.")
+    private BigDecimal valorTotal;
 
-	private Set<ProdutoDTO> produtos;
+    private Set<ProdutoDTO> produtos;
 
-	public PedidoDTO() {
-	}
+    public PedidoDTO() {
+    }
 
-	public PedidoDTO(Pedido pedido) {
-		this.id = pedido.getId();
-		this.idCliente = pedido.getCliente().getId();
-		this.idAtendente = pedido.getAtendente().getId();
-		this.dataPedido = pedido.getDataPedido();
-		this.valorTotal = pedido.getValorTotal();
+    public PedidoDTO(Pedido pedido) {
+        this.id = pedido.getId();
+        this.idCliente = pedido.getCliente().getId();
+        this.idAtendente = pedido.getAtendente().getId();
+        this.dataPedido = pedido.getDataPedido();
+        this.valorTotal = pedido.getValorTotal();
 
-		Set<ProdutoDTO> produtosAux = new HashSet<>();
-		for (Produto produto : pedido.getProdutos()) {
+        Set<ProdutoDTO> produtosAux = new HashSet<>();
+        for (Produto produto : pedido.getProdutos()) {
 
-			ProdutoDTO produtoDTO = new ProdutoDTO(produto);
-			produtosAux.add(produtoDTO);
+            ProdutoDTO produtoDTO = new ProdutoDTO(produto);
+            produtosAux.add(produtoDTO);
 
-		}
-		this.produtos = produtosAux;
-	}
+        }
+        this.produtos = produtosAux;
+    }
 
-	public PedidoDTO(Long idAtendente, Long idCliente, Date dataPedido, BigDecimal valorTotal) {
-		this.idCliente = idCliente;
-		this.idAtendente = idAtendente;
-		this.dataPedido = dataPedido;
-		this.valorTotal = valorTotal;
-	}
+    public PedidoDTO(Long idAtendente, Long idCliente, Date dataPedido, BigDecimal valorTotal) {
+        this.idCliente = idCliente;
+        this.idAtendente = idAtendente;
+        this.dataPedido = dataPedido;
+        this.valorTotal = valorTotal;
+    }
 
-	public Pedido toEntity() {
-		Pedido pedido = new Pedido();
-		pedido.setId(id);
-		pedido.setDataPedido(dataPedido);
-		pedido.setValorTotal(valorTotal);
-		Cliente cliente = new Cliente();
-		cliente.setId(idCliente);
-		pedido.setCliente(cliente);
-		Usuario atendente = new Usuario();
-		atendente.setId(idAtendente);
-		pedido.setAtendente(atendente);
+    public Pedido toEntity() {
+        Pedido pedido = new Pedido();
+        pedido.setId(id);
+        pedido.setDataPedido(dataPedido);
+        pedido.setValorTotal(valorTotal);
+        Cliente cliente = new Cliente();
+        cliente.setId(idCliente);
+        pedido.setCliente(cliente);
+        Usuario atendente = new Usuario();
+        atendente.setId(idAtendente);
+        pedido.setAtendente(atendente);
 
-		Set<Produto> produtosAux = new HashSet<>();
+        Set<Produto> produtosAux = new HashSet<>();
 
-		for (ProdutoDTO produtoDTO : produtos) {
+        for (ProdutoDTO produtoDTO : produtos) {
 
-			Produto produto = new Produto();
-			produto.setId(produtoDTO.getId());
+            Produto produto = new Produto();
+            produto.setId(produtoDTO.getId());
 
-			produtosAux.add(produto);
-		}
+            produtosAux.add(produto);
+        }
 
-		pedido.setProdutos(produtosAux);
-		return pedido;
-	}
+        pedido.setProdutos(produtosAux);
+        return pedido;
+    }
 }

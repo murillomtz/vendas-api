@@ -35,11 +35,10 @@ public class Pedido {
     @Column(name = "valor_total")
     private BigDecimal valorTotal;
 
-    @ManyToMany(cascade = CascadeType.REFRESH)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinTable(name = "pedidos_produtos", joinColumns = @JoinColumn(name = "id_pedido"), inverseJoinColumns = @JoinColumn(name = "id_produto"))
     private Set<Produto> produtos;
-
 
     public Pedido() {
         this.valorTotal = BigDecimal.ZERO;

@@ -10,6 +10,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.mtz.vendasapi.domain.model.Pedido;
+import org.springframework.transaction.annotation.Transactional;
+
 
 @Repository
 public interface PedidoRepository extends PagingAndSortingRepository<Pedido, Long>, JpaSpecificationExecutor<Pedido> {
