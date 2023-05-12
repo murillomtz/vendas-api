@@ -1,72 +1,133 @@
 package com.mtz.vendasapi.domain.service.serviceImp;
 
-import java.util.Optional;
-
+import com.mtz.vendasapi.api.controller.ClienteController;
+import com.mtz.vendasapi.api.controller.UsuarioController;
+import com.mtz.vendasapi.domain.constant.MensagensConstant;
+import com.mtz.vendasapi.domain.exception.NegocioException;
+import com.mtz.vendasapi.domain.model.Cliente;
+import com.mtz.vendasapi.domain.model.Usuario;
+import com.mtz.vendasapi.domain.model.dto.ClienteDTO;
+import com.mtz.vendasapi.domain.model.dto.UsuarioDTO;
+import com.mtz.vendasapi.domain.repository.ClienteRepository;
+import com.mtz.vendasapi.domain.service.IClienteService;
+import com.mtz.vendasapi.infrastructure.ClienteSpecs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.mtz.vendasapi.domain.exception.NegocioException;
-import com.mtz.vendasapi.domain.model.Cliente;
-import com.mtz.vendasapi.domain.repository.ClienteRepository;
-import com.mtz.vendasapi.domain.service.IClienteService;
-import com.mtz.vendasapi.infrastructure.ClienteSpecs;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ClienteServiceImp implements IClienteService {
 
-	@Autowired
-	private ClienteRepository clienteRepository;
+    @Autowired
+    private ClienteRepository clienteRepository;
 
-	@Override
-	public Page<Cliente> listar(String filtro, String ordenacao, int pagina) {
-		return clienteRepository.findAll(ClienteSpecs.filtrarPor(filtro),
-				PageRequest.of(pagina, 10, Sort.by(ordenacao)));
-	}
+    @Override
+    public Page<ClienteDTO> listar(String filtro, String ordenacao, int pagina) {
 
-	@Override
-	public Cliente buscarPorId(Long id) throws NegocioException {
-		Optional<Cliente> clienteOptional = clienteRepository.findById(id);
-		if (clienteOptional.isPresent()) {
-			return clienteOptional.get();
-		} else {
-			throw new NegocioException("Cliente não encontrado");
-		}
-	}
+        try {
+            Page<ClienteDTO> clientesDTO = this.clienteRepository.findAll(ClienteSpecs.
+                            filtrarPor(filtro), PageRequest.of(pagina, 10, Sort.by(ordenacao))).
+                    map(cliente -> new ClienteDTO(cliente));
 
-	@Override
-	public Cliente criar(Cliente cliente) {
-		return clienteRepository.save(cliente);
-	}
+            clientesDTO.forEach(cliente -> cliente.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ClienteController.class).
+                    buscar(cliente.getId())).withRel("Buscar Pelo ID: ")));
 
-	@Override
-	public Cliente atualizar(Cliente cliente) throws NegocioException {
-		Cliente clienteExistente = buscarPorId(cliente.getId());
-		if (clienteExistente != null) {
-			return clienteRepository.save(cliente);
-		} else {
-			throw new NegocioException("Cliente não encontrado");
-		}
-	}
+            return clientesDTO;
+        } catch (Exception e) {
+            throw new NegocioException(MensagensConstant.ERRO_GENERICO.getValor(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
-	@Override
-	public ResponseEntity<String> deletar(Long id) {
-		try {
-			clienteRepository.deleteById(id);
-			return ResponseEntity.status(HttpStatus.OK).body("Cliente excluido com sucesso.");
-		} catch (EmptyResultDataAccessException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente não encontrado");
-		} catch (DataIntegrityViolationException i) {
-//			throw new NegocioException("Esse Cliente possui pedidos, não é possivel excluir.");
-			return ResponseEntity.status(HttpStatus.CONFLICT)
-					.body("Esse Cliente possui pedidos, não é possivel excluir.");
-		}
-	}
+    @Override
+    public ClienteDTO buscarPorId(Long id) {
+        try {
+            Optional<Cliente> clienteOptional = this.clienteRepository.findById(id);
+            if (clienteOptional.isPresent()) {
+                return new ClienteDTO(clienteOptional.get());
+            }
+            throw new NegocioException(MensagensConstant.ERRO_CLIENTE_NAO_ENCONTRADO.getValor(), HttpStatus.NOT_FOUND);
+        } catch (NegocioException m) {
+            throw m;
+        } catch (Exception e) {
+            throw new NegocioException(MensagensConstant.ERRO_GENERICO.getValor(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ClienteDTO criar(Cliente cliente) {
+        try {
+            if (cliente.getId() != null) {
+                throw new NegocioException(MensagensConstant.ERRO_ID_INFORMADO.getValor(), HttpStatus.BAD_REQUEST);
+            }
+            return this.cadastrarOuAtualizar(cliente);
+        } catch (NegocioException m) {
+            throw m;
+        } catch (Exception e) {
+            throw new NegocioException(MensagensConstant.ERRO_GENERICO.getValor(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ClienteDTO atualizar(Cliente cliente) {
+        try {
+            this.buscarPorId(cliente.getId());
+            return this.cadastrarOuAtualizar(cliente);
+        } catch (NegocioException m) {
+            throw m;
+        } catch (Exception e) {
+            throw new NegocioException(MensagensConstant.ERRO_GENERICO.getValor(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public String deletar(Long id) {
+        try {
+            this.clienteRepository.deleteById(id);
+            return MensagensConstant.OK_EXCLUIDO_COM_SUCESSO.getValor();
+        } catch (EmptyResultDataAccessException e) {
+            return MensagensConstant.ERRO_CLIENTE_NAO_ENCONTRADO.getValor();
+        } catch (DataIntegrityViolationException i) {
+            return MensagensConstant.ERRO_EXCLUIR_CLIENTE.getValor();
+        }
+    }
+
+    @Override
+    public List<ClienteDTO> findByEmail(String email) {
+
+        try {
+            List<Cliente> clientes = this.clienteRepository.findByEmail(email);
+
+            if (clientes.isEmpty()) {
+                throw new NegocioException(MensagensConstant.ERRO_CLIENTE_NAO_ENCONTRADO.getValor(), HttpStatus.NOT_FOUND);
+            }
+            List<ClienteDTO> clienteDTO = new ArrayList<>();
+            clientes.forEach(cliente -> clienteDTO.add(new ClienteDTO(cliente)));
+
+            clienteDTO.forEach(usuario -> usuario.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UsuarioController.class).
+                    buscar(usuario.getId())).withRel("Buscar Pelo ID: ")));
+
+            return clienteDTO;
+        } catch (NegocioException m) {
+            throw m;
+        } catch (Exception e) {
+            throw new NegocioException(MensagensConstant.ERRO_GENERICO.getValor(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private ClienteDTO cadastrarOuAtualizar(Cliente cliente) {
+        Cliente clienteEntity = this.clienteRepository.save(cliente);
+        ClienteDTO clienteDTO = new ClienteDTO(clienteEntity);
+        return clienteDTO;
+    }
 
 }

@@ -1,24 +1,15 @@
 package com.mtz.vendasapi.domain.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -26,27 +17,30 @@ import lombok.EqualsAndHashCode;
 @Table(name = "pedidos")
 public class Pedido {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@OneToOne(cascade = CascadeType.MERGE)
-	@JoinColumn(name = "id_atendente")
-	private Usuario atendente;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    @JoinColumn(name = "id_atendente")
+    private Usuario atendente;
 
-	@ManyToOne(cascade = CascadeType.MERGE)
-	// @OnDelete(action = OnDeleteAction.CASCADE)
-	@JoinColumn(name = "id_cliente")
-	private Cliente cliente;
+    @ManyToOne(cascade = CascadeType.REFRESH)
+    @JoinColumn(name = "id_cliente")
+    private Cliente cliente;
 
-	@Column(name = "data_pedido")
-	private Date dataPedido;
+    @Column(name = "data_pedido")
+    private Date dataPedido;
 
-	@Column(name = "valor_total")
-	private BigDecimal valorTotal;
+    @Column(name = "valor_total")
+    private BigDecimal valorTotal;
 
-	@ManyToMany(cascade = CascadeType.MERGE)
-	@JoinTable(name = "pedidos_produtos", joinColumns = @JoinColumn(name = "id_pedido"), inverseJoinColumns = @JoinColumn(name = "id_produto"))
-	private Set<Produto> produtos;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinTable(name = "pedidos_produtos", joinColumns = @JoinColumn(name = "id_pedido"), inverseJoinColumns = @JoinColumn(name = "id_produto"))
+    private Set<Produto> produtos;
 
+    public Pedido() {
+        this.valorTotal = BigDecimal.ZERO;
+    }
 }

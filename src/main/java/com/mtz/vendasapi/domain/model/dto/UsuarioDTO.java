@@ -1,21 +1,20 @@
 package com.mtz.vendasapi.domain.model.dto;
 
-import java.util.Date;
+import com.mtz.vendasapi.domain.model.Usuario;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import com.mtz.vendasapi.domain.model.Usuario;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import java.util.Date;
 
 @AllArgsConstructor
 @Getter
 @Setter
-public class UsuarioDTO {
+public class UsuarioDTO extends RepresentationModel<UsuarioDTO> {
 
 	
 	private Long id;

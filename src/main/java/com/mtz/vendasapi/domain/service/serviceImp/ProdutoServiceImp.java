@@ -1,12 +1,16 @@
 package com.mtz.vendasapi.domain.service.serviceImp;
 
+import com.mtz.vendasapi.api.controller.ProdutoController;
+import com.mtz.vendasapi.domain.constant.MensagensConstant;
+import com.mtz.vendasapi.domain.model.dto.ProdutoDTO;
+import com.mtz.vendasapi.infrastructure.ProdutoSpecs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -15,71 +19,93 @@ import com.mtz.vendasapi.domain.exception.NegocioException;
 import com.mtz.vendasapi.domain.model.Produto;
 import com.mtz.vendasapi.domain.repository.ProdutoRepository;
 import com.mtz.vendasapi.domain.service.IProdutoService;
-import com.mtz.vendasapi.infrastructure.ProdutoSpecs;
+
+import java.util.Optional;
 
 @Service
 public class ProdutoServiceImp implements IProdutoService {
 
-	@Autowired
-	private ProdutoRepository produtoRepository;
+    @Autowired
+    private ProdutoRepository produtoRepository;
 
-	@Override
-	public Page<Produto> listar(String filtro, String ordenacao, int pagina) throws NegocioException {
-		try {
-			Pageable pageable = PageRequest.of(pagina, 10, Sort.by(ordenacao));
-			return produtoRepository.findAll(ProdutoSpecs.filtrarPor(filtro), pageable);
-		} catch (Exception e) {
-			throw new NegocioException("Erro ao listar produtos.", e);
-		}
-	}
+    @Override
+    public Page<ProdutoDTO> listar(String filtro, String ordenacao, int pagina) {
 
-	@Override
-	public Produto criar(Produto produto) throws NegocioException {
-		try {
-			return produtoRepository.save(produto);
-		} catch (Exception e) {
-			throw new NegocioException("Erro ao criar produto.", e);
-		}
-	}
+        try {
+            Page<ProdutoDTO> produtoDTO = this.produtoRepository.findAll(ProdutoSpecs.
+                            filtrarPor(filtro), PageRequest.of(pagina, 10, Sort.by(ordenacao))).
+                    map(produto -> new ProdutoDTO(produto));
 
-	@Override
-	public Produto buscarPorId(Long id) throws NegocioException {
-		try {
-			return produtoRepository.findById(id).orElseThrow(() -> new NegocioException("Produto não encontrado."));
-		} catch (Exception e) {
-			throw new NegocioException("Erro ao buscar produto por id.", e);
-		}
-	}
+            produtoDTO.forEach(produto -> produto.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ProdutoController.class).
+                    buscarPorId(produto.getId())).withRel("Buscar Pelo ID: ")));
 
-	@Override
-	public void atualizar(Produto produto) throws NegocioException {
-		try {
-			Produto produtoExistente = buscarPorId(produto.getId());
+            return produtoDTO;
+        } catch (Exception e) {
+            throw new NegocioException(MensagensConstant.ERRO_GENERICO.getValor(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
-			produtoExistente.setNome(produto.getNome());
-			produtoExistente.setDescricao(produto.getDescricao());
-			produtoExistente.setQuantidade(produto.getQuantidade());
-			produtoExistente.setValorVenda(produto.getValorVenda());
+    @Override
+    public ProdutoDTO criar(Produto produto) {
 
-			produtoRepository.save(produtoExistente);
-		} catch (NegocioException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new NegocioException("Erro ao atualizar produto.", e);
-		}
-	}
+        try {
+            if (produto.getId() != null) {
+                throw new NegocioException(MensagensConstant.ERRO_ID_INFORMADO.getValor(), HttpStatus.BAD_REQUEST);
+            }
+            return this.cadastrarOuAtualizar(produto);
+        } catch (NegocioException m) {
+            throw m;
+        } catch (Exception e) {
+            throw new NegocioException(MensagensConstant.ERRO_GENERICO.getValor(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
-	@Override
-	public ResponseEntity<String> excluir(Long id) {
-		try {
-			produtoRepository.deleteById(id);
-			return ResponseEntity.status(HttpStatus.OK).body("Produto excluido com sucesso.");
-		} catch (EmptyResultDataAccessException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto não encontrado");
-		} catch (DataIntegrityViolationException i) {
-			return ResponseEntity.status(HttpStatus.CONFLICT)
-					.body("Esse Produto está incluso em algum pedido, não é possivel excluir.");
-		}
-	}
+    @Override
+    public ProdutoDTO buscarPorId(Long id) {
+
+        try {
+            Optional<Produto> produtoOptional = this.produtoRepository.findById(id);
+            if (produtoOptional.isPresent()) {
+                return new ProdutoDTO(produtoOptional.get());
+            }
+            throw new NegocioException(MensagensConstant.ERRO_PRODUTO_NAO_ENCONTRADO.getValor(), HttpStatus.NOT_FOUND);
+        } catch (NegocioException m) {
+            throw m;
+        } catch (Exception e) {
+            throw new NegocioException(MensagensConstant.ERRO_GENERICO.getValor(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ProdutoDTO atualizar(Produto produto) throws NegocioException {
+
+        try {
+            this.buscarPorId(produto.getId());
+            return this.cadastrarOuAtualizar(produto);
+        } catch (NegocioException m) {
+            throw m;
+        } catch (Exception e) {
+            throw new NegocioException(MensagensConstant.ERRO_GENERICO.getValor(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public String excluir(Long id) {
+        try {
+            this.produtoRepository.deleteById(id);
+            return MensagensConstant.OK_EXCLUIDO_COM_SUCESSO.getValor();
+        } catch (EmptyResultDataAccessException e) {
+            return MensagensConstant.ERRO_PRODUTO_NAO_ENCONTRADO.getValor();
+        } catch (DataIntegrityViolationException i) {
+            return MensagensConstant.ERRO_EXCLUIR_PRODUTO.getValor();
+        }
+
+    }
+
+    private ProdutoDTO cadastrarOuAtualizar(Produto produto) {
+        Produto produtoEntity = this.produtoRepository.save(produto);
+        ProdutoDTO produtoDTO = new ProdutoDTO(produtoEntity);
+        return produtoDTO;
+    }
 
 }
