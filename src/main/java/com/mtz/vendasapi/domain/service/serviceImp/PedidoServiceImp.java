@@ -27,17 +27,23 @@ import java.util.*;
 @Service
 public class PedidoServiceImp implements IPedidoService {
 
-    @Autowired
+    //Autowired
     private PedidoRepository pedidoRepository;
 
-    @Autowired
+    //@Autowired
     private ProdutoRepository produtoRepository;
 
-    @Autowired
+    //Autowired
     private ClienteRepository clienteRepository;
 
+    public PedidoServiceImp(PedidoRepository pedidoRepository, ProdutoRepository produtoRepository, ClienteRepository clienteRepository) {
+        this.pedidoRepository = pedidoRepository;
+        this.produtoRepository = produtoRepository;
+        this.clienteRepository = clienteRepository;
+    }
+
     @Override
-    public Page<PedidoDTO> listar(String filtro, String ordenacao, int pagina) throws NegocioException {
+    public Page<PedidoDTO> listar(String filtro, String ordenacao, int pagina) {
 
         try {
             Page<PedidoDTO> pedidosDTO = this.pedidoRepository.findAll(PedidoSpecs.

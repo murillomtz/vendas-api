@@ -1,10 +1,12 @@
 package com.mtz.vendasapi.api.controller;
 
+import com.mtz.vendasapi.api.config.SwaggerConfig;
 import com.mtz.vendasapi.domain.model.Cliente;
 import com.mtz.vendasapi.domain.model.Response;
 import com.mtz.vendasapi.domain.model.dto.ClienteDTO;
 import com.mtz.vendasapi.domain.model.dto.UsuarioDTO;
 import com.mtz.vendasapi.domain.service.IClienteService;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.hateoas.Link;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+@Api(tags = SwaggerConfig.CLIENTE)
 @RestController
 @RequestMapping("/clientes")
 public class ClienteController {

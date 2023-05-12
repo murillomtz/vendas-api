@@ -1,9 +1,11 @@
 package com.mtz.vendasapi.api.controller;
 
+import com.mtz.vendasapi.api.config.SwaggerConfig;
 import com.mtz.vendasapi.domain.model.Produto;
 import com.mtz.vendasapi.domain.model.Response;
 import com.mtz.vendasapi.domain.model.dto.ProdutoDTO;
 import com.mtz.vendasapi.domain.service.IProdutoService;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.hateoas.Link;
@@ -12,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Api(tags = SwaggerConfig.PRODUTO)
 @RestController
 @RequestMapping("/produtos")
 public class ProdutoController {

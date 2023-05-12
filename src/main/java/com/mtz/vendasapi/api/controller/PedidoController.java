@@ -1,5 +1,6 @@
 package com.mtz.vendasapi.api.controller;
 
+import com.mtz.vendasapi.api.config.SwaggerConfig;
 import com.mtz.vendasapi.domain.constant.MensagensConstant;
 import com.mtz.vendasapi.domain.exception.NegocioException;
 import com.mtz.vendasapi.domain.model.Pedido;
@@ -11,6 +12,7 @@ import com.mtz.vendasapi.domain.service.IClienteService;
 import com.mtz.vendasapi.domain.service.IPedidoService;
 import com.mtz.vendasapi.domain.service.IProdutoService;
 import com.mtz.vendasapi.domain.service.IUsuarioService;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.hateoas.Link;
@@ -25,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@Api(tags = SwaggerConfig.PEDIDO)
 @RestController
 @RequestMapping("/pedidos")
 public class PedidoController {
@@ -56,10 +59,10 @@ public class PedidoController {
         response.setNumberOfElements(pedidos.getNumberOfElements());
 
 
-        if (pedidos.getTotalElements() != 0) {
-            response.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PedidoController.class)
-                    .criar(pedidos.getContent().get(0))).withRel("Criar novo Pedido: "));
-        }
+         if (pedidos.getTotalElements() != 0) {
+        response.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PedidoController.class)
+                .criar(pedidos.getContent().get(0))).withRel("Criar novo Pedido: "));
+         }
         return ResponseEntity.ok(response);
     }
 
