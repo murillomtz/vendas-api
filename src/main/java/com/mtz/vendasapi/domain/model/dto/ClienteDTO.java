@@ -53,6 +53,10 @@ public class ClienteDTO extends RepresentationModel<ClienteDTO> {
     @Size(max = 100, message = "O email do usuário não pode ter mais de 100 caracteres")
     private String email;
 
+    public ClienteDTO() {
+
+    }
+
     public ClienteDTO(Cliente cliente) {
         this.id = cliente.getId();
         this.nome = cliente.getNome();

@@ -8,7 +8,7 @@ import com.mtz.vendasapi.domain.model.Produto;
 
 public interface IProdutoService {
 
-	public Page<ProdutoDTO> listar(String filtro, String ordenacao, int pagina) throws NegocioException;
+	public Page<ProdutoDTO> listar(String filtro, String ordenacao, int pagina, int size);
 
 	public ProdutoDTO criar(Produto produto) throws NegocioException;
 

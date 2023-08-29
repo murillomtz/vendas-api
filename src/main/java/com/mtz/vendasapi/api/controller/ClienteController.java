@@ -21,6 +21,7 @@ import java.util.List;
 @Api(tags = SwaggerConfig.CLIENTE)
 @RestController
 @RequestMapping("/clientes")
+@CrossOrigin(origins = "*")
 public class ClienteController {
 
     @Autowired

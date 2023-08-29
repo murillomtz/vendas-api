@@ -108,7 +108,7 @@ public class VendasApiApplication {
         cliente1.setSobrenome("Silva");
         cliente1.setSexo("Masculino");
         cliente1.setDataNascimento(new Date(1990, 5, 15));
-        cliente1.setNacionalidade("Brasileiro");
+        cliente1.setNacionalidade("Brasil");
         cliente1.setEndereco("Rua A, 123");
         cliente1.setCidade("São Paulo");
         cliente1.setEstado("SP");
@@ -121,7 +121,7 @@ public class VendasApiApplication {
         cliente2.setSobrenome("Silveira");
         cliente2.setSexo("Feminino");
         cliente2.setDataNascimento(new Date(1985, 8, 20));
-        cliente2.setNacionalidade("Brasileira");
+        cliente2.setNacionalidade("Brasil");
         cliente2.setEndereco("Rua B, 456");
         cliente2.setCidade("Rio de Janeiro");
         cliente2.setEstado("RJ");
@@ -134,7 +134,7 @@ public class VendasApiApplication {
         cliente3.setSobrenome("Santos");
         cliente3.setSexo("Masculino");
         cliente3.setDataNascimento(new Date(1990, 5, 15));
-        cliente3.setNacionalidade("Brasileira");
+        cliente3.setNacionalidade("Brasil");
         cliente3.setEndereco("Rua C, 789");
         cliente3.setCidade("São Paulo");
         cliente3.setEstado("SP");
@@ -147,7 +147,7 @@ public class VendasApiApplication {
         cliente4.setSobrenome("Silva");
         cliente4.setSexo("Feminino");
         cliente4.setDataNascimento(new Date(1987, 2, 10));
-        cliente4.setNacionalidade("Brasileira");
+        cliente4.setNacionalidade("Brasil");
         cliente4.setEndereco("Rua D, 123");
         cliente4.setCidade("Curitiba");
         cliente4.setEstado("PR");
@@ -160,7 +160,7 @@ public class VendasApiApplication {
         cliente5.setSobrenome("Oliveira");
         cliente5.setSexo("Masculino");
         cliente5.setDataNascimento(new Date(1995, 7, 12));
-        cliente5.setNacionalidade("Brasileira");
+        cliente5.setNacionalidade("Brasil");
         cliente5.setEndereco("Rua E, 456");
         cliente5.setCidade("Belo Horizonte");
         cliente5.setEstado("MG");
@@ -173,7 +173,7 @@ public class VendasApiApplication {
         cliente6.setSobrenome("Mendes");
         cliente6.setSexo("Feminino");
         cliente6.setDataNascimento(new Date(1989, 9, 5));
-        cliente6.setNacionalidade("Brasileira");
+        cliente6.setNacionalidade("Brasil");
         cliente6.setEndereco("Rua F, 789");
         cliente6.setCidade("Porto Alegre");
         cliente6.setEstado("RS");
@@ -186,7 +186,7 @@ public class VendasApiApplication {
         cliente7.setSobrenome("Pereira");
         cliente7.setSexo("Masculino");
         cliente7.setDataNascimento(new Date(1991, 11, 23));
-        cliente7.setNacionalidade("Brasileira");
+        cliente7.setNacionalidade("Brasil");
         cliente7.setEndereco("Rua G, 123");
         cliente7.setCidade("Recife");
         cliente7.setEstado("PE");
@@ -199,7 +199,7 @@ public class VendasApiApplication {
         cliente8.setSobrenome("Santosss");
         cliente8.setSexo("Masculino");
         cliente8.setDataNascimento(new Date(1990, 5, 15));
-        cliente8.setNacionalidade("Brasileira");
+        cliente8.setNacionalidade("Brasil");
         cliente8.setEndereco("Rua C, 789s");
         cliente8.setCidade("São Paulo");
         cliente8.setEstado("SP");
@@ -212,7 +212,7 @@ public class VendasApiApplication {
         cliente9.setSobrenome("Silvaaa");
         cliente9.setSexo("Feminino");
         cliente9.setDataNascimento(new Date(1987, 2, 10));
-        cliente9.setNacionalidade("Brasileira");
+        cliente9.setNacionalidade("Brasil");
         cliente9.setEndereco("Rua D, 123");
         cliente9.setCidade("Curitiba");
         cliente9.setEstado("PR");
@@ -225,7 +225,7 @@ public class VendasApiApplication {
         cliente10.setSobrenome("Oliveirasss");
         cliente10.setSexo("Masculino");
         cliente10.setDataNascimento(new Date(1995, 7, 12));
-        cliente10.setNacionalidade("Brasileira");
+        cliente10.setNacionalidade("Brasil");
         cliente10.setEndereco("Rua E, 456");
         cliente10.setCidade("Belo Horizonte");
         cliente10.setEstado("MG");
@@ -238,7 +238,7 @@ public class VendasApiApplication {
         cliente11.setSobrenome("Mendesaa");
         cliente11.setSexo("Feminino");
         cliente11.setDataNascimento(new Date(1989, 9, 5));
-        cliente11.setNacionalidade("Brasileira");
+        cliente11.setNacionalidade("Brasil");
         cliente11.setEndereco("Rua F, 789");
         cliente11.setCidade("Porto Alegre");
         cliente11.setEstado("RS");
@@ -251,7 +251,7 @@ public class VendasApiApplication {
         cliente12.setSobrenome("Pereira");
         cliente12.setSexo("Masculino");
         cliente12.setDataNascimento(new Date(1991, 11, 23));
-        cliente12.setNacionalidade("Brasileira");
+        cliente12.setNacionalidade("Brasil");
         cliente12.setEndereco("Rua G, 123");
         cliente12.setCidade("Recife");
         cliente12.setEstado("PE");
