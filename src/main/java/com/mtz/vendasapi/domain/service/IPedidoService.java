@@ -10,7 +10,7 @@ public interface IPedidoService {
 
 	public Page<PedidoDTO> listar(String filtro, String ordenacao, int pagina);
 
-	public PedidoDTO criar(Long idCliente, Pedido pedido);
+    public PedidoDTO criar(Long idCliente, Pedido pedido);
 
 	public PedidoDTO buscarPorId(Long id) throws NegocioException;
 

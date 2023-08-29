@@ -17,17 +17,21 @@ import org.springframework.web.bind.annotation.*;
 @Api(tags = SwaggerConfig.PRODUTO)
 @RestController
 @RequestMapping("/produtos")
+@CrossOrigin(origins = "*")
 public class ProdutoController {
 
     @Autowired
     private IProdutoService produtoService;
 
     @GetMapping
+
     public ResponseEntity<Response<Page<ProdutoDTO>>> listar(@RequestParam(value = "filtro", required = false) String filtro,
                                                              @RequestParam(value = "ordenacao", defaultValue = "id") String ordenacao,
-                                                             @RequestParam(value = "pagina", defaultValue = "0") int pagina) {
+                                                             @RequestParam(value = "pagina", defaultValue = "0") int pagina,
+                                                             @RequestParam(value = "size", defaultValue = "10") int size
+                                                             ) {
 
-        Page<ProdutoDTO> produtos = this.produtoService.listar(filtro, ordenacao, pagina);
+        Page<ProdutoDTO> produtos = this.produtoService.listar(filtro, ordenacao, pagina , size);
 
         Response<Page<ProdutoDTO>> response = new Response<>();
 
