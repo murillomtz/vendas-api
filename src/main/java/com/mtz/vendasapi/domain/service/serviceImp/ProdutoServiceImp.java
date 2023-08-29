@@ -29,11 +29,11 @@ public class ProdutoServiceImp implements IProdutoService {
     private ProdutoRepository produtoRepository;
 
     @Override
-    public Page<ProdutoDTO> listar(String filtro, String ordenacao, int pagina) {
+    public Page<ProdutoDTO> listar(String filtro, String ordenacao, int pagina,int size) {
 
         try {
             Page<ProdutoDTO> produtoDTO = this.produtoRepository.findAll(ProdutoSpecs.
-                            filtrarPor(filtro), PageRequest.of(pagina, 10, Sort.by(ordenacao))).
+                            filtrarPor(filtro), PageRequest.of(pagina, size, Sort.by(ordenacao))).
                     map(produto -> new ProdutoDTO(produto));
 
             produtoDTO.forEach(produto -> produto.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ProdutoController.class).

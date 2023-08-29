@@ -13,7 +13,6 @@ import com.mtz.vendasapi.domain.repository.PedidoRepository;
 import com.mtz.vendasapi.domain.repository.ProdutoRepository;
 import com.mtz.vendasapi.domain.service.IPedidoService;
 import com.mtz.vendasapi.infrastructure.PedidoSpecs;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.*;
