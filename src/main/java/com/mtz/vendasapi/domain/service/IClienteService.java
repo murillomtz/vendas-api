@@ -1,7 +1,6 @@
 package com.mtz.vendasapi.domain.service;
 
-import com.mtz.vendasapi.domain.model.dto.ClienteDTO;
-import com.mtz.vendasapi.domain.model.dto.UsuarioDTO;
+import com.mtz.vendasapi.api.model.dto.ClienteDTO;
 import org.springframework.data.domain.Page;
 
 import com.mtz.vendasapi.domain.exception.NegocioException;

@@ -1,4 +1,4 @@
-package com.mtz.vendasapi.domain.model.dto;
+package com.mtz.vendasapi.api.model.dto;
 
 import com.mtz.vendasapi.domain.model.Cliente;
 import com.mtz.vendasapi.domain.model.Pedido;
@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
@@ -40,23 +39,7 @@ public class PedidoDTO extends RepresentationModel<PedidoDTO> {
     private Set<ProdutoDTO> produtos;
 
     public PedidoDTO() {
-    }
-
-    public PedidoDTO(Pedido pedido) {
-        this.id = pedido.getId();
-        this.idCliente = pedido.getCliente().getId();
-        this.idAtendente = pedido.getAtendente().getId();
-        this.dataPedido = pedido.getDataPedido();
-        this.valorTotal = pedido.getValorTotal();
-
-        Set<ProdutoDTO> produtosAux = new HashSet<>();
-        for (Produto produto : pedido.getProdutos()) {
-
-            ProdutoDTO produtoDTO = new ProdutoDTO(produto);
-            produtosAux.add(produtoDTO);
-
-        }
-        this.produtos = produtosAux;
+        //Construtor vazio
     }
 
     public PedidoDTO(Long idAtendente, Long idCliente, Date dataPedido, BigDecimal valorTotal) {
@@ -64,31 +47,5 @@ public class PedidoDTO extends RepresentationModel<PedidoDTO> {
         this.idAtendente = idAtendente;
         this.dataPedido = dataPedido;
         this.valorTotal = valorTotal;
-    }
-
-    public Pedido toEntity() {
-        Pedido pedido = new Pedido();
-        pedido.setId(id);
-        pedido.setDataPedido(dataPedido);
-        pedido.setValorTotal(valorTotal);
-        Cliente cliente = new Cliente();
-        cliente.setId(idCliente);
-        pedido.setCliente(cliente);
-        Usuario atendente = new Usuario();
-        atendente.setId(idAtendente);
-        pedido.setAtendente(atendente);
-
-        Set<Produto> produtosAux = new HashSet<>();
-
-        for (ProdutoDTO produtoDTO : produtos) {
-
-            Produto produto = new Produto();
-            produto.setId(produtoDTO.getId());
-
-            produtosAux.add(produto);
-        }
-
-        pedido.setProdutos(produtosAux);
-        return pedido;
     }
 }

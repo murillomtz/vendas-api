@@ -1,6 +1,5 @@
-package com.mtz.vendasapi.domain.model.dto;
+package com.mtz.vendasapi.api.model.dto;
 
-import com.mtz.vendasapi.domain.model.Cliente;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,6 +27,7 @@ public class ClienteDTO extends RepresentationModel<ClienteDTO> {
     private String sobrenome;
 
     @NotBlank(message = "O sexo é obrigatório")
+    @Size(min = 1, max = 10, message = "O sexo deve conter entre 1 e 10 caracteres")
     private String sexo;
 
     @NotNull(message = "A data de nascimento é obrigatória")
@@ -35,18 +35,23 @@ public class ClienteDTO extends RepresentationModel<ClienteDTO> {
     private Date dataNascimento;
 
     @NotBlank(message = "A nacionalidade é obrigatória")
+    @Size(min = 2, max = 50, message = "A nacionalidade deve conter entre 2 e 50 caracteres")
     private String nacionalidade;
 
     @NotBlank(message = "O endereço é obrigatório")
+    @Size(min = 5, max = 200, message = "O endereço deve conter entre 5 e 200 caracteres")
     private String endereco;
 
     @NotBlank(message = "A cidade é obrigatória")
+    @Size(min = 2, max = 100, message = "A cidade deve conter entre 2 e 100 caracteres")
     private String cidade;
 
     @NotBlank(message = "O estado é obrigatório")
+    @Size(min = 2, max = 50, message = "O estado deve conter entre 2 e 50 caracteres")
     private String estado;
 
     @NotBlank(message = "O telefone é obrigatório")
+    @Size(min = 8, max = 15, message = "O telefone deve conter entre 8 e 15 caracteres")
     private String telefone;
 
     @NotBlank(message = "O email do usuário não pode estar em branco")
@@ -54,37 +59,6 @@ public class ClienteDTO extends RepresentationModel<ClienteDTO> {
     private String email;
 
     public ClienteDTO() {
-
+        // Construtor vazio
     }
-
-    public ClienteDTO(Cliente cliente) {
-        this.id = cliente.getId();
-        this.nome = cliente.getNome();
-        this.sobrenome = cliente.getSobrenome();
-        this.sexo = cliente.getSexo();
-        this.dataNascimento = cliente.getDataNascimento();
-        this.nacionalidade = cliente.getNacionalidade();
-        this.endereco = cliente.getEndereco();
-        this.cidade = cliente.getCidade();
-        this.estado = cliente.getEstado();
-        this.telefone = cliente.getTelefone();
-        this.email = cliente.getEmail();
-    }
-
-    public Cliente toEntity() {
-        Cliente cliente = new Cliente();
-        cliente.setId(id);
-        cliente.setNome(nome);
-        cliente.setSobrenome(sobrenome);
-        cliente.setSexo(sexo);
-        cliente.setDataNascimento(dataNascimento);
-        cliente.setNacionalidade(nacionalidade);
-        cliente.setEndereco(endereco);
-        cliente.setCidade(cidade);
-        cliente.setEstado(estado);
-        cliente.setTelefone(telefone);
-        cliente.setEmail(email);
-        return cliente;
-    }
-
 }

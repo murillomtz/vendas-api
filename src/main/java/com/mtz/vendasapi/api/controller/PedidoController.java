@@ -1,18 +1,17 @@
 package com.mtz.vendasapi.api.controller;
 
-import com.mtz.vendasapi.api.config.SwaggerConfig;
+import com.mtz.vendasapi.config.SwaggerConfig;
 import com.mtz.vendasapi.domain.constant.MensagensConstant;
 import com.mtz.vendasapi.domain.exception.NegocioException;
-import com.mtz.vendasapi.domain.model.Pedido;
-import com.mtz.vendasapi.domain.model.Produto;
-import com.mtz.vendasapi.domain.model.Response;
-import com.mtz.vendasapi.domain.model.dto.PedidoDTO;
-import com.mtz.vendasapi.domain.model.dto.ProdutoDTO;
+import com.mtz.vendasapi.domain.model.*;
+import com.mtz.vendasapi.api.model.dto.PedidoDTO;
+import com.mtz.vendasapi.api.model.dto.ProdutoDTO;
 import com.mtz.vendasapi.domain.service.IClienteService;
 import com.mtz.vendasapi.domain.service.IPedidoService;
 import com.mtz.vendasapi.domain.service.IProdutoService;
 import com.mtz.vendasapi.domain.service.IUsuarioService;
 import io.swagger.annotations.Api;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.hateoas.Link;
@@ -30,19 +29,25 @@ import java.util.Set;
 @Api(tags = SwaggerConfig.PEDIDO)
 @RestController
 @RequestMapping("/pedidos")
+@CrossOrigin(origins = "*")
 public class PedidoController {
 
-    @Autowired
-    private IPedidoService pedidoService;
+
+    private final IPedidoService pedidoService;
+    private final IProdutoService produtoService;
+    private final IClienteService clienteService;
+    private final IUsuarioService usuarioService;
+    private final ModelMapper modelMapper;
 
     @Autowired
-    private IProdutoService produtoService;
+    public PedidoController(IPedidoService pedidoService, IProdutoService produtoService, IClienteService clienteService, IUsuarioService usuarioService, ModelMapper modelMapper) {
+        this.pedidoService = pedidoService;
+        this.produtoService = produtoService;
+        this.clienteService = clienteService;
+        this.usuarioService = usuarioService;
+        this.modelMapper = modelMapper;
+    }
 
-    @Autowired
-    private IClienteService clienteService;
-
-    @Autowired
-    private IUsuarioService usuarioService;
 
     @GetMapping
     public ResponseEntity<Response<Page<PedidoDTO>>> listar(@RequestParam(value = "filtro", required = false) String filtro, @RequestParam(value = "ordenacao", defaultValue = "id") String ordenacao, @RequestParam(value = "pagina", defaultValue = "0") int pagina) {
@@ -59,10 +64,9 @@ public class PedidoController {
         response.setNumberOfElements(pedidos.getNumberOfElements());
 
 
-         if (pedidos.getTotalElements() != 0) {
-        response.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PedidoController.class)
-                .criar(pedidos.getContent().get(0))).withRel("Criar novo Pedido: "));
-         }
+        if (pedidos.getTotalElements() != 0) {
+            response.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PedidoController.class).criar(pedidos.getContent().get(0))).withRel("Criar novo Pedido: "));
+        }
         return ResponseEntity.ok(response);
     }
 
@@ -70,7 +74,7 @@ public class PedidoController {
     public ResponseEntity<Response<PedidoDTO>> criar(@RequestBody PedidoDTO pedidoDTO) {
 
         Response<PedidoDTO> response = new Response<>();
-        PedidoDTO pedidoDTO1 = this.pedidoService.criar(pedidoDTO.getIdCliente(), pedidoDTO.toEntity());
+        PedidoDTO pedidoDTO1 = this.pedidoService.criar(pedidoDTO.getIdCliente(), modelMapper.map(pedidoDTO, Pedido.class));
         response.setData(pedidoDTO1);
         response.setStatusCode(HttpStatus.CREATED.value());
 
@@ -89,7 +93,8 @@ public class PedidoController {
     public ResponseEntity<Response<PedidoDTO>> buscarPorId(@PathVariable Long id) {
         Response<PedidoDTO> response = new Response<>();
         PedidoDTO pedidoDTO = this.pedidoService.buscarPorId(id);
-        Pedido pedido = pedidoDTO.toEntity();
+
+        Pedido pedido = modelMapper.map(pedidoDTO, Pedido.class);
         response.setData(pedidoDTO);
         response.setStatusCode(HttpStatus.OK.value());
 
@@ -115,9 +120,11 @@ public class PedidoController {
         PedidoDTO pedidoExistente = pedidoService.buscarPorId(id);
 
         if (pedidoExistente != null) {
-            Pedido pedido = pedidoExistente.toEntity();
-            pedido.setAtendente(usuarioService.buscarPorId(pedidoDTO.getIdAtendente()).toEntity());
-            pedido.setCliente(clienteService.buscarPorId(pedidoDTO.getIdCliente()).toEntity());
+
+            Pedido pedido = modelMapper.map(pedidoExistente, Pedido.class);
+
+            pedido.setAtendente(modelMapper.map(usuarioService.buscarPorId(pedidoDTO.getIdAtendente()), Usuario.class));
+            pedido.setCliente(modelMapper.map(clienteService.buscarPorId(pedidoDTO.getIdCliente()), Cliente.class));
             pedido.setValorTotal(BigDecimal.ZERO);
             Set<Produto> produtosAux = new HashSet<>();
             List<BigDecimal> valorPedidos = new ArrayList<>();
@@ -125,7 +132,8 @@ public class PedidoController {
             Produto produtoAux;
 
             for (ProdutoDTO produto : pedidoDTO.getProdutos()) {
-                produtoAux = this.produtoService.buscarPorId(produto.getId()).toEntity();
+
+                produtoAux = modelMapper.map(this.produtoService.buscarPorId(produto.getId()), Produto.class);
                 produtosAux.add(produtoAux);
 
                 pedido.getValorTotal().add(produtoAux.getValorVenda());
@@ -144,14 +152,12 @@ public class PedidoController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Response<String>> excluir(@PathVariable Long id) {
-        //return pedidoService.excluir(id);
 
         Response<String> response = new Response<>();
         response.setData(String.valueOf(this.pedidoService.excluir(id)));
         response.setStatusCode(HttpStatus.OK.value());
 
-        response.add(Link.of("http://localhost:8080/pedidos")
-                .withRel("Buscar todos os Clientes: "));
+        response.add(Link.of("http://localhost:8080/pedidos").withRel("Buscar todos os Clientes: "));
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -173,7 +179,8 @@ public class PedidoController {
             });
             BigDecimal valorPedido = valorPedidos.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
             pedido.setValorTotal(pedido.getValorTotal().add(valorPedido));
-            response.setData(this.pedidoService.atualizar(pedido.toEntity(), Boolean.FALSE));
+
+            response.setData(this.pedidoService.atualizar(modelMapper.map(pedido, Pedido.class), Boolean.FALSE));
         }
         return ResponseEntity.status(HttpStatus.OK).body(response);
 
@@ -212,7 +219,7 @@ public class PedidoController {
 
 
             }
-            response.setData(this.pedidoService.atualizar(pedido.toEntity(), Boolean.FALSE));
+            response.setData(this.pedidoService.atualizar(modelMapper.map(pedido, Pedido.class), Boolean.FALSE));
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -237,5 +244,25 @@ public class PedidoController {
 
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/clientes/{idCliente}/pedidos")
+    public ResponseEntity<Response<Page<PedidoDTO>>> getPedidosByIdCliente(@PathVariable Long idCliente, @RequestParam(value = "filtro", required = false) String filtro, @RequestParam(value = "ordenacao", defaultValue = "id") String ordenacao, @RequestParam(value = "pagina", defaultValue = "0") int pagina) {
+
+        Response<Page<PedidoDTO>> response = new Response<>();
+        Page<PedidoDTO> pedidos = pedidoService.findPedidosByIdCliente(idCliente, filtro, ordenacao, pagina);
+
+        response.setContent(pedidos.getContent());
+        response.setStatusCode(HttpStatus.OK.value());
+        response.setSize(pedidos.getSize());
+        response.setPageNumber(pedidos.getPageable().getPageNumber());
+        response.setTotalPages(pedidos.getTotalPages());
+        response.setTotalElementes(pedidos.getTotalElements());
+        response.setNumberOfElements(pedidos.getNumberOfElements());
+
+        response.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PedidoController.class).criar(null)).withRel("Criar novo Pedido"));
+
+        return ResponseEntity.ok(response);
+    }
+
 
 }

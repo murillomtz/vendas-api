@@ -1,6 +1,5 @@
-package com.mtz.vendasapi.domain.model.dto;
+package com.mtz.vendasapi.api.model.dto;
 
-import com.mtz.vendasapi.domain.model.Produto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -38,24 +37,6 @@ public class ProdutoDTO extends RepresentationModel<ProdutoDTO> {
 
     public ProdutoDTO() {
         // construtor padrão sem argumentos
-    }
-
-    public ProdutoDTO(Produto produto) {
-        this.id = produto.getId();
-        this.nome = produto.getNome();
-        this.descricao = produto.getDescricao();
-        this.valorVenda = produto.getValorVenda();
-        this.quantidade = produto.getQuantidade();
-    }
-
-    public Produto toEntity() {
-        Produto produto = new Produto();
-        produto.setId(this.id);
-        produto.setNome(this.nome);
-        produto.setDescricao(this.descricao);
-        produto.setValorVenda(this.valorVenda);
-        produto.setQuantidade(this.quantidade);
-        return produto;
     }
 
     @Override
