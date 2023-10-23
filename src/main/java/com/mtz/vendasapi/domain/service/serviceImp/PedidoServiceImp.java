@@ -6,13 +6,15 @@ import com.mtz.vendasapi.domain.exception.NegocioException;
 import com.mtz.vendasapi.domain.model.Cliente;
 import com.mtz.vendasapi.domain.model.Pedido;
 import com.mtz.vendasapi.domain.model.Produto;
-import com.mtz.vendasapi.domain.model.dto.PedidoDTO;
-import com.mtz.vendasapi.domain.model.dto.ProdutoDTO;
+import com.mtz.vendasapi.api.model.dto.PedidoDTO;
+import com.mtz.vendasapi.api.model.dto.ProdutoDTO;
 import com.mtz.vendasapi.domain.repository.ClienteRepository;
 import com.mtz.vendasapi.domain.repository.PedidoRepository;
 import com.mtz.vendasapi.domain.repository.ProdutoRepository;
 import com.mtz.vendasapi.domain.service.IPedidoService;
 import com.mtz.vendasapi.infrastructure.PedidoSpecs;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.*;
@@ -27,18 +29,22 @@ import java.util.*;
 public class PedidoServiceImp implements IPedidoService {
 
     //Autowired
-    private PedidoRepository pedidoRepository;
+    private final PedidoRepository pedidoRepository;
 
     //@Autowired
-    private ProdutoRepository produtoRepository;
+    private final ProdutoRepository produtoRepository;
 
     //Autowired
-    private ClienteRepository clienteRepository;
+    private final ClienteRepository clienteRepository;
 
-    public PedidoServiceImp(PedidoRepository pedidoRepository, ProdutoRepository produtoRepository, ClienteRepository clienteRepository) {
+    private final ModelMapper modelMapper;
+
+    @Autowired
+    public PedidoServiceImp(PedidoRepository pedidoRepository, ProdutoRepository produtoRepository, ClienteRepository clienteRepository, ModelMapper modelMapper) {
         this.pedidoRepository = pedidoRepository;
         this.produtoRepository = produtoRepository;
         this.clienteRepository = clienteRepository;
+        this.modelMapper = modelMapper;
     }
 
     @Override
@@ -47,7 +53,8 @@ public class PedidoServiceImp implements IPedidoService {
         try {
             Page<PedidoDTO> pedidosDTO = this.pedidoRepository.findAll(PedidoSpecs.
                             filtrarPor(filtro), PageRequest.of(pagina, 10, Sort.by(ordenacao))).
-                    map(pedido -> new PedidoDTO(pedido));
+
+                    map(pedido -> modelMapper.map(pedido, PedidoDTO.class));
 
             pedidosDTO.forEach(pedido -> pedido.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PedidoController.class).
                     buscarPorId(pedido.getId())).withRel("Buscar Pelo ID: ")));
@@ -96,7 +103,7 @@ public class PedidoServiceImp implements IPedidoService {
         try {
             Optional<Pedido> pedidoOptional = this.pedidoRepository.findById(id);
             if (pedidoOptional.isPresent()) {
-                return new PedidoDTO(pedidoOptional.get());
+                return modelMapper.map(pedidoOptional.get(), PedidoDTO.class);
             }
             throw new NegocioException(MensagensConstant.ERRO_PEDIDO_NAO_ENCONTRADO.getValor(), HttpStatus.NOT_FOUND);
         } catch (NegocioException m) {
@@ -109,14 +116,15 @@ public class PedidoServiceImp implements IPedidoService {
     @Override
     public PedidoDTO atualizar(Pedido pedido, Boolean isAtualiaza) {
         try {
-            PedidoDTO pedidoExistente = new PedidoDTO(pedido);
+            PedidoDTO pedidoExistente = modelMapper.map(pedido, PedidoDTO.class);
 
             if (isAtualiaza == Boolean.TRUE) {
                 pedidoExistente.getProdutos().clear();
             }
             pedido.getProdutos().forEach(produto -> {
                         if (produto.getId() != null) {
-                            pedidoExistente.getProdutos().add(new ProdutoDTO(produto));
+
+                            pedidoExistente.getProdutos().add(modelMapper.map(produto, ProdutoDTO.class));
                         }
                     }
 
@@ -126,7 +134,8 @@ public class PedidoServiceImp implements IPedidoService {
             pedidoExistente.setIdAtendente(pedido.getAtendente().getId());
             pedidoExistente.setDataPedido(pedido.getDataPedido());
 
-            return this.cadastrarOuAtualizar(pedidoExistente.toEntity());
+
+            return this.cadastrarOuAtualizar(modelMapper.map(pedidoExistente, Pedido.class));
         } catch (NegocioException e) {
             throw e;
         } catch (Exception e) {
@@ -169,7 +178,29 @@ public class PedidoServiceImp implements IPedidoService {
 
     private PedidoDTO cadastrarOuAtualizar(Pedido pedido) {
         Pedido pedidoEntity = this.pedidoRepository.save(pedido);
-        PedidoDTO pedidoDTO = new PedidoDTO(pedidoEntity);
+        PedidoDTO pedidoDTO = modelMapper.map(pedidoEntity, PedidoDTO.class);
         return pedidoDTO;
     }
+
+    @Override
+    public Page<PedidoDTO> findPedidosByIdCliente(Long idCliente, String filtro, String ordenacao, int pagina) {
+        try {
+            Pageable pageable = PageRequest.of(pagina, 10, Sort.by(ordenacao));
+            List<PedidoDTO> pedidosDTO = pedidoRepository.findByClienteId(idCliente);
+
+            if (pedidosDTO.isEmpty()) {
+                throw new NegocioException("Não existem pedidos para o cliente selecionado.", HttpStatus.NOT_FOUND);
+            }
+
+            pedidosDTO.forEach(pedido -> pedido.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PedidoController.class)
+                    .buscarPorId(pedido.getId())).withRel("Buscar Pelo ID")));
+
+            return new PageImpl<>(pedidosDTO, pageable, pedidosDTO.size());
+        } catch (NegocioException m) {
+            throw m;
+        } catch (Exception e) {
+            throw new NegocioException(MensagensConstant.ERRO_GENERICO.getValor(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

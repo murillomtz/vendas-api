@@ -1,10 +1,8 @@
 package com.mtz.vendasapi.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.mtz.vendasapi.domain.model.dto.ClienteDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.springframework.data.domain.Page;
 import org.springframework.hateoas.RepresentationModel;
 
 import java.util.List;

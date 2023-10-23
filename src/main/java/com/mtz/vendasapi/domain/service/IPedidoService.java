@@ -1,6 +1,6 @@
 package com.mtz.vendasapi.domain.service;
 
-import com.mtz.vendasapi.domain.model.dto.PedidoDTO;
+import com.mtz.vendasapi.api.model.dto.PedidoDTO;
 import org.springframework.data.domain.Page;
 
 import com.mtz.vendasapi.domain.exception.NegocioException;
@@ -19,5 +19,6 @@ public interface IPedidoService {
 	public String excluir(Long id);
 
 	public Page<PedidoDTO> findPedidosByProduto(Long id, String filtro, String ordenacao, int pagina);
+	public Page<PedidoDTO> findPedidosByIdCliente(Long idCliente, String filtro, String ordenacao, int pagina);
 
 }

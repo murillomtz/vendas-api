@@ -1,4 +1,4 @@
-package com.mtz.vendasapi.api.config;
+package com.mtz.vendasapi.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

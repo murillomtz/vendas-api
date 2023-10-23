@@ -1,45 +1,38 @@
 package com.mtz.vendasapi.api.controller;
 
-import java.net.URI;
-import java.util.List;
-import java.util.Optional;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-
-import com.mtz.vendasapi.api.config.SwaggerConfig;
-import com.mtz.vendasapi.domain.model.Cliente;
+import com.mtz.vendasapi.api.model.dto.UsuarioDTO;
+import com.mtz.vendasapi.config.SwaggerConfig;
 import com.mtz.vendasapi.domain.model.Response;
-import com.mtz.vendasapi.domain.model.dto.ClienteDTO;
+import com.mtz.vendasapi.domain.model.Usuario;
+import com.mtz.vendasapi.domain.service.IUsuarioService;
 import io.swagger.annotations.Api;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.bind.annotation.*;
 
-import com.mtz.vendasapi.domain.model.Usuario;
-import com.mtz.vendasapi.domain.model.dto.UsuarioDTO;
-import com.mtz.vendasapi.domain.service.IUsuarioService;
+import javax.validation.Valid;
+import java.util.List;
 
 @Api(tags = SwaggerConfig.USUARIO)
 @RestController
 @RequestMapping("/usuarios")
+@CrossOrigin(origins = "*")
 public class UsuarioController {
 
+    private final IUsuarioService usuarioService;
+
+    private final ModelMapper modelMapper;
+
     @Autowired
-    private IUsuarioService usuarioService;
+    public UsuarioController(IUsuarioService usuarioService, ModelMapper modelMapper) {
+        this.usuarioService = usuarioService;
+        this.modelMapper = modelMapper;
+    }
 
     @GetMapping
     public ResponseEntity<Response<Page<UsuarioDTO>>> listar(@RequestParam(value = "filtro", required = false) String filtro,
@@ -69,7 +62,8 @@ public class UsuarioController {
     public ResponseEntity<Response<UsuarioDTO>> buscar(@PathVariable Long id) {
         Response<UsuarioDTO> response = new Response<>();
         UsuarioDTO usuarioDTO = this.usuarioService.buscarPorId(id);
-        Usuario usuario = usuarioDTO.toEntity();
+        Usuario usuario = modelMapper.map(usuarioDTO, Usuario.class);
+
         response.setData(usuarioDTO);
         response.setStatusCode(HttpStatus.OK.value());
 
@@ -95,7 +89,7 @@ public class UsuarioController {
     public ResponseEntity<Response<UsuarioDTO>> criar(@RequestBody @Valid UsuarioDTO usuarioDTO) {
 
         Response<UsuarioDTO> response = new Response<>();
-        UsuarioDTO usuarioDTO1 = this.usuarioService.criar(usuarioDTO.toEntity());
+        UsuarioDTO usuarioDTO1 = this.usuarioService.criar(modelMapper.map(usuarioDTO, Usuario.class));
         response.setData(usuarioDTO1);
         response.setStatusCode(HttpStatus.CREATED.value());
 
@@ -120,20 +114,20 @@ public class UsuarioController {
 
 
         Response<UsuarioDTO> response = new Response<>();
-        Usuario usuario = usuarioDTO.toEntity();
+        Usuario usuario = modelMapper.map(usuarioDTO, Usuario.class);
         usuario.setId(id);
         response.setData(this.usuarioService.atualizar(usuario));
         response.setStatusCode(HttpStatus.OK.value());
-        UsuarioDTO usuarioDTOChenger = new UsuarioDTO(usuario);
+        UsuarioDTO usuarioDTOChenger = modelMapper.map(usuario, UsuarioDTO.class);
 
         response.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UsuarioController.class)
-                .buscar(usuarioDTO.getId())).withRel("Buscar Pelo ID: "));
+                .buscar(usuarioDTOChenger.getId())).withRel("Buscar Pelo ID: "));
 
         response.add(Link.of("http://localhost:8080/usuarios")
                 .withRel("Buscar todos os Usuários: "));
 
         response.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UsuarioController.class)
-                .criar(usuarioDTO)).withRel("Criar novo Usuário: "));
+                .criar(usuarioDTOChenger)).withRel("Criar novo Usuário: "));
 
         response.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UsuarioController.class)
                 .deletar(usuario.getId())).withRel("Remover Usuário: "));

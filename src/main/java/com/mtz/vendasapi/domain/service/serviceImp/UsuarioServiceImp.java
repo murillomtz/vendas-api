@@ -1,12 +1,14 @@
 package com.mtz.vendasapi.domain.service.serviceImp;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 import com.mtz.vendasapi.api.controller.UsuarioController;
+import com.mtz.vendasapi.api.model.dto.UsuarioDTO;
 import com.mtz.vendasapi.domain.constant.MensagensConstant;
-import com.mtz.vendasapi.domain.model.dto.UsuarioDTO;
+import com.mtz.vendasapi.domain.exception.NegocioException;
+import com.mtz.vendasapi.domain.model.Usuario;
+import com.mtz.vendasapi.domain.repository.UsuarioRepository;
+import com.mtz.vendasapi.domain.service.IUsuarioService;
+import com.mtz.vendasapi.infrastructure.UsuarioSpecs;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -17,17 +19,23 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import com.mtz.vendasapi.domain.exception.NegocioException;
-import com.mtz.vendasapi.domain.model.Usuario;
-import com.mtz.vendasapi.domain.repository.UsuarioRepository;
-import com.mtz.vendasapi.domain.service.IUsuarioService;
-import com.mtz.vendasapi.infrastructure.UsuarioSpecs;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UsuarioServiceImp implements IUsuarioService {
 
+
+    private final UsuarioRepository usuarioRepository;
+
+    private final ModelMapper modelMapper;
+
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    public UsuarioServiceImp(UsuarioRepository usuarioRepository, ModelMapper modelMapper) {
+        this.usuarioRepository = usuarioRepository;
+        this.modelMapper = modelMapper;
+    }
 
     @Override
     public Page<UsuarioDTO> listar(String filtro, String ordenacao, int pagina) {
@@ -35,8 +43,7 @@ public class UsuarioServiceImp implements IUsuarioService {
         try {
             Page<UsuarioDTO> usuarioDTO = this.usuarioRepository.findAll(UsuarioSpecs.
                             filtrarPor(filtro), PageRequest.of(pagina, 10, Sort.by(ordenacao))).
-                    map(usuario -> new UsuarioDTO(usuario));
-
+                    map(usuario -> modelMapper.map(usuario, UsuarioDTO.class));
             usuarioDTO.forEach(usuario -> usuario.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UsuarioController.class).
                     buscar(usuario.getId())).withRel("Buscar Pelo ID: ")));
 
@@ -52,7 +59,7 @@ public class UsuarioServiceImp implements IUsuarioService {
         try {
             Optional<Usuario> usuarioOptional = this.usuarioRepository.findById(id);
             if (usuarioOptional.isPresent()) {
-                return new UsuarioDTO(usuarioOptional.get());
+                return modelMapper.map(usuarioOptional.get(), UsuarioDTO.class);
             }
             throw new NegocioException(MensagensConstant.ERRO_USUARIO_NAO_ENCONTRADO.getValor(), HttpStatus.NOT_FOUND);
         } catch (NegocioException m) {
@@ -111,7 +118,7 @@ public class UsuarioServiceImp implements IUsuarioService {
                 throw new NegocioException(MensagensConstant.ERRO_USUARIO_NAO_ENCONTRADO.getValor(), HttpStatus.NOT_FOUND);
             }
             List<UsuarioDTO> usuariosDTO = new ArrayList<>();
-            usuarios.forEach(usuario -> usuariosDTO.add(new UsuarioDTO(usuario)));
+            usuarios.forEach(usuario -> usuariosDTO.add(modelMapper.map(usuario, UsuarioDTO.class)));
 
             usuariosDTO.forEach(usuario -> usuario.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UsuarioController.class).
                     buscar(usuario.getId())).withRel("Buscar Pelo ID: ")));
@@ -126,7 +133,7 @@ public class UsuarioServiceImp implements IUsuarioService {
 
     private UsuarioDTO cadastrarOuAtualizar(Usuario usuario) {
         Usuario usuarioEntity = this.usuarioRepository.save(usuario);
-        UsuarioDTO usuarioDTO = new UsuarioDTO(usuarioEntity);
+        UsuarioDTO usuarioDTO = modelMapper.map(usuarioEntity, UsuarioDTO.class);
         return usuarioDTO;
     }
 }
