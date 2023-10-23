@@ -51,10 +51,10 @@ public class UsuarioController {
         response.setTotalElementes(usuarios.getTotalElements());
         response.setNumberOfElements(usuarios.getNumberOfElements());
 
-
-        response.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UsuarioController.class)
-                .criar(usuarios.getContent().get(0))).withRel("Criar novo Usuário: "));
-
+        if (!usuarios.getContent().isEmpty() && usuarios.getContent().get(0) != null) {
+            response.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UsuarioController.class)
+                    .criar(usuarios.getContent().get(0))).withRel("Criar novo Usuário: "));
+        }
         return ResponseEntity.ok(response);
     }
 
