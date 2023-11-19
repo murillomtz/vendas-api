@@ -1,6 +1,5 @@
 package com.mtz.vendasapi.domain.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.OnDelete;

@@ -65,7 +65,7 @@ public class PedidoController {
 
 
         if (pedidos.getTotalElements() != 0) {
-            response.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PedidoController.class).criar(pedidos.getContent().get(0))).withRel("Criar novo Pedido: "));
+            response.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PedidoController.class).criar(pedidos.getContent().get(0))).withRel( "Criar novo Pedido: "));
         }
         return ResponseEntity.ok(response);
     }
